@@ -482,7 +482,8 @@ void updatescreen(short x, short y)
     {
         for (j=0; j <= 63; j++)
         {
-            vesp.SCREEN[i][j] = vesp.MEMORY[0x300 + 64*i+j];}
+            vesp.SCREEN[i][j] = vesp.MEMORY[0x300 + 64*i+j];
+        }
     }
     for (j=0;j<= y; j++) cout << (char) vesp.SCREEN[x][j];
 }
@@ -490,7 +491,8 @@ void delay(float t)
 {
     clock_t ticks; 
     ticks = clock() + (clock_t) (t * (float) CLOCKS_PER_SEC); 
-    while ( ticks > clock() ){
+    while ( ticks > clock() )
+    {
     }
     ;
 }
@@ -526,8 +528,10 @@ void kernel (void)
                     else
                         if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                        else {
-                            cout << "Invalid address. Try again.\n"; break;}
+                        else 
+                        {
+                            cout << "Invalid address. Try again.\n"; break;
+                        }
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013]; //Disk address
                 vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017]; //RAM address
                 vesp.PC = 0x800; //load using vesp.
@@ -537,7 +541,8 @@ void kernel (void)
                     for(i = 12235; i<= 12238 && vesp.reset == 0; i++) maincycle(0);
                     if (vesp.MEMORY[0] == 0) 
                     {
-                        for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;}
+                        for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;
+                    }
                     else
                         for(i = 12239; i<= 12246 && vesp.reset == 0; i++) maincycle(0);
                 }
@@ -560,8 +565,10 @@ void kernel (void)
                     else
                         if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                        else {
-                            cout << "Invalid address. Try again.\n"; break;}
+                        else 
+                        {
+                            cout << "Invalid address. Try again.\n"; break;
+                        }
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013]; //RAM address
                 vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017]; //Disk address
                 vesp.PC = 0x820; //save using vesp.
@@ -571,7 +578,8 @@ void kernel (void)
                     for(i = 12235; i<= 12238 && vesp.reset == 0; i++) maincycle(0);
                     if (vesp.MEMORY[0] == 0) //Check if the end of save is reached
                     {
-                        for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;}
+                        for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;
+                    }
                     else
                         for(i = 12239; i<= 12246 && vesp.reset == 0; i++) maincycle(0);
                 }
@@ -589,8 +597,10 @@ void kernel (void)
                     else
                         if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                        else {
-                            cout << "Invalid address. Try again.\n"; break;}
+                        else 
+                        {
+                            cout << "Invalid address. Try again.\n"; break;
+                        }
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
                 vesp.PC = 0x0840;
                 for(i = 12224; i<= 12225 && vesp.reset == 0; i++) maincycle(0); //jump to the location specified by the user (see the execute  vesp code above)
@@ -610,8 +620,10 @@ void kernel (void)
                     else
                         if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                        else {
-                            cout << "Invalid address. Try again.\n"; break;}
+                        else 
+                        {
+                            cout << "Invalid address. Try again.\n"; break;
+                        }
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
                 vesp.PC = 0x0870; //read using vesp
                 for(i = 12224; i<= 12224 && vesp.reset == 0; i++) maincycle(0); //Initialize IX.
@@ -631,14 +643,18 @@ void kernel (void)
                         else
                             if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
                                 vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                            else {
-                                cout << "Invalid address. Try again.\n"; break;}
+                            else 
+                            {
+                                cout << "Invalid address. Try again.\n"; break;
+                            }
                     vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017];
                     vesp.PC = 0x0872;
                     for(i = 12241; i<= 12244 && vesp.reset == 0; i++) maincycle(0);
                     //check to stop reading if it is FFFF.
-                    if (vesp.MEMORY[0] == 0) {
-                        for(i = 12245; i<= 12248 && vesp.reset == 0; i++) maincycle(0); break;}
+                    if (vesp.MEMORY[0] == 0) 
+                    {
+                        for(i = 12245; i<= 12248 && vesp.reset == 0; i++) maincycle(0); break;
+                    }
                     else
                         for(i = 12245; i<= 12248 && vesp.reset == 0; i++) maincycle(0);
                 }
@@ -656,8 +672,10 @@ void kernel (void)
                     else
                         if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                        else {
-                            cout << "Invalid address. Try again.\n"; break;}
+                        else 
+                        {
+                            cout << "Invalid address. Try again.\n"; break;
+                        }
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
                 for(i = 12222; i<= 12222 && vesp.reset == 0; i++) maincycle(0); 
                 //write using vesp.
@@ -682,7 +700,8 @@ int readprogram(void)
     char longfilename[100] ="/UMD-Web-Dreamweaver/teaching/courses/enee350/vesp-source-code/vesp3.0XK/", filename[25]; 
     //The above path needs to be changed if the file is located in another directory. 
     FILE *file;
-    do{
+    do
+    {
         cout << "Enter your program's starting " 
             << "address ( >= 3) as a 3-digit hex number: ";
         cin >> hex >> vesp.PC; 
@@ -690,7 +709,8 @@ int readprogram(void)
     while (vesp.PC < 3);
     address =  vesp.PC; action = -1;
     cout << "\n";
-    do {
+    do 
+    {
         cout << "Enter 0 to type in your program or 1 to read it from a file: ";
         cin >> action;
     }
@@ -715,16 +735,19 @@ int readprogram(void)
             {
                 while (fscanf(file,"%x",&instruction) != EOF  &&  address < 8192 ) 
                 {
-                    vesp.MEMORY[address] = instruction; address = address + 1;}
+                    vesp.MEMORY[address] = instruction; address = address + 1;
+                }
                 fclose(file); 
             }
             else
             {
-                cout << "The file is not found. Check if file to be opened is in the program directory... \n"; exit(1);}
+                cout << "The file is not found. Check if file to be opened is in the program directory... \n"; exit(1);
+            }
         }
     }
     else  
-        do {
+        do 
+        {
             cin.clear();
             cout << "Enter instruction  " 
                 << (address -vesp.PC)  
@@ -739,7 +762,8 @@ int readprogram(void)
     {
         cout << "Memory overflow," 
             << "Please quit from the file menu and restart me!"; 
-        return address-1;}
+        return address-1;
+    }
     progend = address - 1; 
     //save the program into a file
     cout << "Enter 0 to continue, 1 to save your program into a file: ";
@@ -776,7 +800,8 @@ int readprogram(void)
             }
             else
             {
-                cout << "The file is not found. Check if file to be opened is in the program directory... \n"; exit(1);}
+                cout << "The file is not found. Check if file to be opened is in the program directory... \n"; exit(1);
+            }
         }
     }
     return progend;
@@ -899,12 +924,14 @@ void fetch(int trace)
     if(trace == 1)        
     {
         cout << "MAR = "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
-        cout << hex << vesp.MAR << ", ";}
+        cout << hex << vesp.MAR << ", ";
+    }
     vesp.IR = vesp.MEMORY[vesp.MAR]; vesp.clock = vesp.clock +1; 
     if(trace == 1)         
     {
         cout << "IR = "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
-        cout << hex << vesp.IR << ", ";}
+        cout << hex << vesp.IR << ", ";
+    }
 }
 void decode(int trace)
 {
@@ -1148,13 +1175,15 @@ void execute(void)
             if(VAR==0)
             {
                 vesp.MAR = vesp.IR&0x0FFF; //without an extra clock
-                vesp.MEMORY[vesp.MAR] = vesp.MDR;}
+                vesp.MEMORY[vesp.MAR] = vesp.MDR;
+            }
             else if ( VAR >= 1 &&  VAR <= 14)
             {
                 vesp.MAR = (VAR << 12)|vesp.IR&0x0FFF;
                 vesp.HDISK[vesp.MAR] = vesp.MDR ;
             }
-            else {
+            else 
+            {
                 cout << "\n page fault- instruction not executed!\n";
                 // This will be a place to call a trap and exit to the OS.
             }
@@ -1176,7 +1205,8 @@ void execute(void)
             if(vesp.MAR >> 12 == 0) vesp.MDR = vesp.MEMORY[vesp.MAR];
             else if ( (vesp.MAR >> 12) >= 1 && (vesp.MAR >> 12)  <= 14)
                 vesp.MDR = vesp.HDISK[vesp.MAR];
-            else {
+            else 
+            {
                 cout << "\n page fault- instruction not executed!\n";
                 // This will be a place to call a trap and exit to the OS.
             }
@@ -1188,7 +1218,8 @@ void execute(void)
             else if (VAR >= 1 && VAR <= 14)
             {
                 vesp.MAR = (VAR << 12)|vesp.IR&0x0FFF;
-                vesp.HDISK[vesp.MAR]=vesp.MDR;}
+                vesp.HDISK[vesp.MAR]=vesp.MDR;
+            }
             else
             {
                 cout << "\n page fault- instruction not executed!\n";
@@ -1209,14 +1240,16 @@ void execute(void)
         case 0x5:
             if (A == 0) 
             {
-                vesp.PC = vesp.IR & 0x0FFF;}
+                vesp.PC = vesp.IR & 0x0FFF;
+            }
             vesp.jez = 1;
             vesp.clock = vesp.clock +1; break;  
             //Jump if A is > 0
         case 0x6:
             if (A > 0) 
             {
-                vesp.PC = vesp.IR & 0x0FFF;}
+                vesp.PC = vesp.IR & 0x0FFF;
+            }
             vesp.jps = 1;
             vesp.clock = vesp.clock +1; break;  
             //Halt and extended branch
@@ -1228,37 +1261,43 @@ void execute(void)
                 case 0x1:
                     if (A == 0) 
                     {
-                        vesp.PC = B;}
+                        vesp.PC = B;
+                    }
                     vesp.jap = 1;
                     vesp.clock = vesp.clock +1; break;  //Jump if A > 0
                 case 0x2:
                     if (A > 0) 
                     {
-                        vesp.PC = B;}
+                        vesp.PC = B;
+                    }
                     vesp.jaz = 1;
                     vesp.clock = vesp.clock +1; break;  //Jump if A = 0
                 case 0x3:
                     if (A < 0) 
                     {
-                        vesp.PC = B;}
+                        vesp.PC = B;
+                    }
                     vesp.jng = 1;
                     vesp.clock = vesp.clock +1; break;  //Jump if A < 0
                 case 0x4:
                     if (A >= 0) 
                     {
-                        vesp.PC = B;}
+                        vesp.PC = B;
+                    }
                     vesp.jpz = 1;
                     vesp.clock = vesp.clock +1; break;  //Jump if A >= 0
                 case 0x5:
                     if (A <= 0) 
                     {
-                        vesp.PC = B;}
+                        vesp.PC = B;
+                    }
                     vesp.jnz = 1;
                     vesp.clock = vesp.clock +1; break;  //Jump if A <= 0
                 case 0x6:
                     if (A != 0) 
                     {
-                        vesp.PC = B;}
+                        vesp.PC = B;
+                    }
                     vesp.jnz = 1;
                     vesp.clock = vesp.clock +1; break;  //Jump if A <= 0
                 case 0x7:
@@ -1627,117 +1666,117 @@ MAR = 0002, PC = 00000A07, IR = 2002, reset = 0
 add = 0 complement = 0
 Memory[0002] = E000
 Machine Cycle 00002D00: PC = 00000A07, 
-        FETCH SUBCYCLE
-        MAR = 0A07, IR = E001, 
-        Clock cycle = CF07
-        DECODE SUBCYCLE
-        Decoded instruction is: MXF
-        Clock cycle = CF07
-        EXECUTE SUBCYCLE
-        Clock cycle = CF0A
-        A = 0007, B = 0007, IX = E001, Z = 0, S = 0, C = 0, F = 0
-        MAR = 0001, PC = 00000A08, IR = E001, reset = 0
-        add = 0 complement = 0
-        Memory[0001] = 0007
-        Machine Cycle 00002D01: PC = 00000A08, 
-        FETCH SUBCYCLE
-        MAR = 0A08, IR = 7000, 
-        Clock cycle = CF0C
-        DECODE SUBCYCLE
-        Decoded instruction is: HLT
-        Clock cycle = CF0C
-        EXECUTE SUBCYCLE
-        Clock cycle = CF0D
-        A = 0007, B = 0007, IX = E001, Z = 0, S = 0, C = 0, F = 0
-        MAR = 0A08, PC = 00000A09, IR = 7000, reset = 1
-        add = 0 complement = 0
-        enter:  
-        ----------
-        */
-        /*
-           [Session started at 2008-11-11 08:47:26 -0500.]
-           vesp is booting...                                             
-           loading kernel....                                             
-           enter: r
-           m-address: 0A00
-           enter next code: 2000
-           enter next code: 000E
-           enter next code: 2001
-           enter next code: 000D
-           enter next code: 0000
-           enter next code: 7000
-           enter next code: FFFF
-           enter: w
-           address:x0A00
-           2000
-           000E
-           2001
-           000D
-           0000
-           7000
-           enter: e
-           m-address: 0A00
-           Machine Cycle 00002CE9: PC = 00000A00, 
-           FETCH SUBCYCLE
-           MAR = 0A00, IR = 2000, 
-           Clock cycle = CE6E
-           DECODE SUBCYCLE
-           Decoded instruction is: LDA
-           Clock cycle = CE6E
-           EXECUTE SUBCYCLE
-           Clock cycle = CE71
-           A = 000E, B = 0A00, IX = 0A07, Z = 1, S = 0, C = 0, F = 0
-           MAR = 0000, PC = 00000A02, IR = 2000, reset = 0
-           add = 0 complement = 0
-           Memory[0000] = 000E
-           Machine Cycle 00002CEA: PC = 00000A02, 
-           FETCH SUBCYCLE
-           MAR = 0A02, IR = 2001, 
-           Clock cycle = CE73
-           DECODE SUBCYCLE
-           Decoded instruction is: LDA
-           Clock cycle = CE73
-           EXECUTE SUBCYCLE
-           Clock cycle = CE76
-           A = 000E, B = 000D, IX = 0A07, Z = 0, S = 0, C = 0, F = 0
-           MAR = 0001, PC = 00000A04, IR = 2001, reset = 0
-           add = 0 complement = 0
-           Memory[0001] = 000D
-           Machine Cycle 00002CEB: PC = 00000A04, 
-           FETCH SUBCYCLE
-           MAR = 0A04, IR = 0000, 
-           Clock cycle = CE78
-           DECODE SUBCYCLE
-           Decoded instruction is: ADA
-           Clock cycle = CE78
-           EXECUTE SUBCYCLE
-           Clock cycle = CE79
-           A = 001B, B = 000D, IX = 0A07, Z = 0, S = 0, C = 0, F = 0
-           MAR = 0A04, PC = 00000A05, IR = 0000, reset = 0
-           add = 1 complement = 0
-        Machine Cycle 00002CEC: PC = 00000A05, 
-        FETCH SUBCYCLE
-        MAR = 0A05, IR = 7000, 
-        Clock cycle = CE7B
-        DECODE SUBCYCLE
-        Decoded instruction is: HLT
-        Clock cycle = CE7B
-        EXECUTE SUBCYCLE
-        Clock cycle = CE7C
-        A = 001B, B = 000D, IX = 0A07, Z = 0, S = 0, C = 0, F = 0
-        MAR = 0A05, PC = 00000A06, IR = 7000, reset = 1
-        add = 0 complement = 0
-        enter: 
-        */
-        //sample code in core memory (to be removed when read and write are implemented.)
-        //stored in 0x0A00--0x0A06 -- one of the user program frames in vesp.MEMORY
-        // vesp.MEMORY[0x0A00] = 0x2000;  vesp.MEMORY[0x0A01] = 0x000F;
-        // vesp.MEMORY[0x0A02] = 0x2001;  vesp.MEMORY[0x0A03] = 0x000F;
-        // vesp.MEMORY[0x0A04] = 0x0000;  vesp.MEMORY[0x0A05] = 0x7000;
-        // vesp.MEMORY[0x0A06] = 0xFFFF; //end of program
-        //sample code in disk memory (to be removed when read and write are implemented.)
-        //stored in 0x1300--0x1306 -- one of the user program frames in vesp.MEMORY
-        // vesp.HDISK[0x1300] = 0x2000;  vesp.HDISK[0x1301] = 0x000F;
-        // vesp.HDISK[0x1302] = 0x2001;  vesp.HDISK[0x1303] = 0x000F;
-        // vesp.HDISK[0x1304] = 0x0300;  vesp.HDISK[0x1305] = 0x7000;
-        // vesp.HDISK[0x1306] = 0xFFFF; //end of program
+FETCH SUBCYCLE
+MAR = 0A07, IR = E001, 
+    Clock cycle = CF07
+    DECODE SUBCYCLE
+    Decoded instruction is: MXF
+    Clock cycle = CF07
+    EXECUTE SUBCYCLE
+    Clock cycle = CF0A
+    A = 0007, B = 0007, IX = E001, Z = 0, S = 0, C = 0, F = 0
+    MAR = 0001, PC = 00000A08, IR = E001, reset = 0
+    add = 0 complement = 0
+    Memory[0001] = 0007
+    Machine Cycle 00002D01: PC = 00000A08, 
+    FETCH SUBCYCLE
+    MAR = 0A08, IR = 7000, 
+    Clock cycle = CF0C
+    DECODE SUBCYCLE
+    Decoded instruction is: HLT
+    Clock cycle = CF0C
+    EXECUTE SUBCYCLE
+    Clock cycle = CF0D
+    A = 0007, B = 0007, IX = E001, Z = 0, S = 0, C = 0, F = 0
+    MAR = 0A08, PC = 00000A09, IR = 7000, reset = 1
+    add = 0 complement = 0
+    enter:  
+    ----------
+    */
+    /*
+       [Session started at 2008-11-11 08:47:26 -0500.]
+       vesp is booting...                                             
+       loading kernel....                                             
+       enter: r
+       m-address: 0A00
+       enter next code: 2000
+       enter next code: 000E
+       enter next code: 2001
+       enter next code: 000D
+       enter next code: 0000
+       enter next code: 7000
+       enter next code: FFFF
+       enter: w
+       address:x0A00
+       2000
+       000E
+       2001
+       000D
+       0000
+       7000
+       enter: e
+       m-address: 0A00
+       Machine Cycle 00002CE9: PC = 00000A00, 
+       FETCH SUBCYCLE
+       MAR = 0A00, IR = 2000, 
+       Clock cycle = CE6E
+       DECODE SUBCYCLE
+       Decoded instruction is: LDA
+       Clock cycle = CE6E
+       EXECUTE SUBCYCLE
+       Clock cycle = CE71
+       A = 000E, B = 0A00, IX = 0A07, Z = 1, S = 0, C = 0, F = 0
+       MAR = 0000, PC = 00000A02, IR = 2000, reset = 0
+       add = 0 complement = 0
+       Memory[0000] = 000E
+       Machine Cycle 00002CEA: PC = 00000A02, 
+       FETCH SUBCYCLE
+       MAR = 0A02, IR = 2001, 
+       Clock cycle = CE73
+       DECODE SUBCYCLE
+       Decoded instruction is: LDA
+       Clock cycle = CE73
+       EXECUTE SUBCYCLE
+       Clock cycle = CE76
+       A = 000E, B = 000D, IX = 0A07, Z = 0, S = 0, C = 0, F = 0
+       MAR = 0001, PC = 00000A04, IR = 2001, reset = 0
+       add = 0 complement = 0
+       Memory[0001] = 000D
+       Machine Cycle 00002CEB: PC = 00000A04, 
+       FETCH SUBCYCLE
+       MAR = 0A04, IR = 0000, 
+       Clock cycle = CE78
+       DECODE SUBCYCLE
+       Decoded instruction is: ADA
+       Clock cycle = CE78
+       EXECUTE SUBCYCLE
+       Clock cycle = CE79
+       A = 001B, B = 000D, IX = 0A07, Z = 0, S = 0, C = 0, F = 0
+       MAR = 0A04, PC = 00000A05, IR = 0000, reset = 0
+       add = 1 complement = 0
+       Machine Cycle 00002CEC: PC = 00000A05, 
+       FETCH SUBCYCLE
+       MAR = 0A05, IR = 7000, 
+       Clock cycle = CE7B
+       DECODE SUBCYCLE
+       Decoded instruction is: HLT
+       Clock cycle = CE7B
+       EXECUTE SUBCYCLE
+       Clock cycle = CE7C
+       A = 001B, B = 000D, IX = 0A07, Z = 0, S = 0, C = 0, F = 0
+    MAR = 0A05, PC = 00000A06, IR = 7000, reset = 1
+    add = 0 complement = 0
+    enter: 
+    */
+    //sample code in core memory (to be removed when read and write are implemented.)
+    //stored in 0x0A00--0x0A06 -- one of the user program frames in vesp.MEMORY
+    // vesp.MEMORY[0x0A00] = 0x2000;  vesp.MEMORY[0x0A01] = 0x000F;
+    // vesp.MEMORY[0x0A02] = 0x2001;  vesp.MEMORY[0x0A03] = 0x000F;
+    // vesp.MEMORY[0x0A04] = 0x0000;  vesp.MEMORY[0x0A05] = 0x7000;
+    // vesp.MEMORY[0x0A06] = 0xFFFF; //end of program
+    //sample code in disk memory (to be removed when read and write are implemented.)
+    //stored in 0x1300--0x1306 -- one of the user program frames in vesp.MEMORY
+    // vesp.HDISK[0x1300] = 0x2000;  vesp.HDISK[0x1301] = 0x000F;
+    // vesp.HDISK[0x1302] = 0x2001;  vesp.HDISK[0x1303] = 0x000F;
+    // vesp.HDISK[0x1304] = 0x0300;  vesp.HDISK[0x1305] = 0x7000;
+    // vesp.HDISK[0x1306] = 0xFFFF; //end of program

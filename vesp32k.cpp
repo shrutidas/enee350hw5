@@ -228,27 +228,32 @@ void updatescreen(short x, short y); //New
 void delay(float t);                 //New
 //AYO: Define the registers of the architecture.
 typedef struct 
-{unsigned short   MAR,PC,IR,MDR,VAR;
+{
+    unsigned short   MAR,PC,IR,MDR,VAR;
     unsigned long clock;
     short MEMORY[8192],S,C,F,Z,reset,add,sub,cmp,lda,mov,jmp,jez,jps,jng,jpz,jnz,jap,jaz,nop,jmb,hlt,ina,dea,inb,deb,inx,dex,ana,anb,ioa,iob,sla,sra,slb,srb,mxf,mxt;
     short   BOOTSTRAP[512],SCREEN[16][64],HDISK[65536];
     short   newcommand, readcommand;
-} architecture;  architecture   vesp;
+}
+architecture;  architecture   vesp;
 
 using namespace std;
 
 int j=1;
 
 int main(void)
-{//int address = 0,i = 0,action,action2,progend;
+{
+    //int address = 0,i = 0,action,action2,progend;
 
     initialize();//AYO:  create and copy the boot vector into vesp's memory. Create kernel and store it on the disk, 0x1000...
     bootstrap(); //Copy from bootstrap into vesp.MEMORY[020,....]
     return 1; 
 }
 
+
 void bootstrap(void) // delegated to the BIOS chip
-{unsigned int address = 0;
+{
+    unsigned int address = 0;
     //copy the bootstrap code into vesp.MEMORY[0x020...]
     for(address=0; address <= 0x84; address++) //address should begin at 0xFF00 but we ignore FF to keep BOOTSTRAP addressing small
         vesp.MEMORY[address + 0x20] = vesp.BOOTSTRAP[address];
@@ -258,8 +263,10 @@ void bootstrap(void) // delegated to the BIOS chip
     boot();
 }
 
+
 void boot(void)
-{short i;
+{
+    short i;
     // clear the framebuffer
     for(i = 1; i<= 4254 && vesp.reset == 0; i++) maincycle(0);
     //write "vesp is booting..."
@@ -281,8 +288,10 @@ void boot(void)
     kernel();
 }
 
+
 void initialize(void)
-{vesp.PC = vesp.MEMORY[0] = vesp.MEMORY[1] = vesp.MEMORY[2] = vesp.MEMORY[3] = vesp.MEMORY[4] = vesp.IR = 0; vesp.reset = 0; vesp.clock = 0;
+{
+    vesp.PC = vesp.MEMORY[0] = vesp.MEMORY[1] = vesp.MEMORY[2] = vesp.MEMORY[3] = vesp.MEMORY[4] = vesp.IR = 0; vesp.reset = 0; vesp.clock = 0;
 
     //vesp's boot code begins at location 0x0020.
     // When vesp starts, it first loads the boot code from vesp.Bootsrap into vesp.MEMORY[0x0020-..]
@@ -524,28 +533,41 @@ void initialize(void)
 }
 
 
+
 void updatescreen(short x, short y)
-{ short i,j;
+{
+    short i,j;
     for (i=0; i <= 15; i++)
-    {for (j=0; j <= 63; j++)
-        {vesp.SCREEN[i][j] = vesp.MEMORY[0x300 + 64*i+j];}
+    {
+        for (j=0; j <= 63; j++)
+        {
+            vesp.SCREEN[i][j] = vesp.MEMORY[0x300 + 64*i+j];}
+
     }
+
 
     for (j=0;j<= y; j++) cout << (char) vesp.SCREEN[x][j];
 }
 
+
 void delay(float t)
 {
+
     clock_t ticks; 
     ticks = clock() + (clock_t) (t * (float) CLOCKS_PER_SEC); 
-    while ( ticks > clock() ){};
-} 
+    while ( ticks > clock() ){
+    }
+    ;
+}
+
 
 void kernel (void)
-{int i;
+{
+    int i;
     vesp.newcommand = 1;
     while (vesp.newcommand == 1)
-    {int programSize=0;
+    {
+        int programSize=0;
         vesp.PC = 0x700; //execute display "enter" code
         for(i = 12208; i<= 12213 && vesp.reset == 0; i++) maincycle(0); // invite (write "enter:") (new command)
         updatescreen(3,6); //display the frame buffer
@@ -554,7 +576,8 @@ void kernel (void)
         getchar();
 
         switch(vesp.MEMORY[0x0010]) // This could be done in vesp as well- but doing it in C simplifies things.
-        { 
+        {
+
             case 'l':
                 vesp.PC = 0x781; for(i = 12214; i<= 12223 && vesp.reset == 0; i++) maincycle(0); //Display "d-address:"
                 updatescreen(4,10); //display the frame buffer
@@ -575,7 +598,9 @@ void kernel (void)
                     else
                         if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                        else {cout << "Invalid address. Try again.\n"; break;}
+                        else {
+                            cout << "Invalid address. Try again.\n"; break;}
+
 
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013]; //Disk address
                 vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017]; //RAM address
@@ -584,12 +609,16 @@ void kernel (void)
                 for(i = 12234; i<= 12234 && vesp.reset == 0; i++) maincycle(0); //initialize IX
 
                 while(programSize++ <= 256)
-                {for(i = 12235; i<= 12238 && vesp.reset == 0; i++) maincycle(0);
+                {
+                    for(i = 12235; i<= 12238 && vesp.reset == 0; i++) maincycle(0);
                     if (vesp.MEMORY[0] == 0) 
-                    {for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;}
+                    {
+                        for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;}
+
                     else
                         for(i = 12239; i<= 12246 && vesp.reset == 0; i++) maincycle(0);
                 }
+
 
                 break;
 
@@ -613,7 +642,9 @@ void kernel (void)
                     else
                         if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                        else {cout << "Invalid address. Try again.\n"; break;}
+                        else {
+                            cout << "Invalid address. Try again.\n"; break;}
+
 
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013]; //RAM address
                 vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017]; //Disk address
@@ -622,12 +653,16 @@ void kernel (void)
                 for(i = 12234; i<= 12234 && vesp.reset == 0; i++) maincycle(0); //initialize IX
 
                 while(programSize++ <= 256)
-                {for(i = 12235; i<= 12238 && vesp.reset == 0; i++) maincycle(0);
+                {
+                    for(i = 12235; i<= 12238 && vesp.reset == 0; i++) maincycle(0);
                     if (vesp.MEMORY[0] == 0) //Check if the end of save is reached
-                    {for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;}
+                    {
+                        for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;}
+
                     else
                         for(i = 12239; i<= 12246 && vesp.reset == 0; i++) maincycle(0);
                 }
+
 
                 break;
 
@@ -646,7 +681,9 @@ void kernel (void)
                     else
                         if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                        else {cout << "Invalid address. Try again.\n"; break;}
+                        else {
+                            cout << "Invalid address. Try again.\n"; break;}
+
 
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
 
@@ -670,7 +707,9 @@ void kernel (void)
                     else
                         if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                        else {cout << "Invalid address. Try again.\n"; break;}
+                        else {
+                            cout << "Invalid address. Try again.\n"; break;}
+
 
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
 
@@ -678,7 +717,8 @@ void kernel (void)
                 for(i = 12224; i<= 12224 && vesp.reset == 0; i++) maincycle(0); //Initialize IX.
 
                 while(programSize++ <= 256)
-                {vesp.PC = 0x0850;
+                {
+                    vesp.PC = 0x0850;
                     for(i = 12225; i<= 12240 && vesp.reset == 0; i++) maincycle(0); 
                     updatescreen(6,16); //display the frame buffer (enter next code:)
 
@@ -694,17 +734,22 @@ void kernel (void)
                         else
                             if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
                                 vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                            else {cout << "Invalid address. Try again.\n"; break;}
+                            else {
+                                cout << "Invalid address. Try again.\n"; break;}
+
 
                     vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017];
 
                     vesp.PC = 0x0872;
                     for(i = 12241; i<= 12244 && vesp.reset == 0; i++) maincycle(0);
                     //check to stop reading if it is FFFF.
-                    if (vesp.MEMORY[0] == 0) {for(i = 12245; i<= 12248 && vesp.reset == 0; i++) maincycle(0); break;}
+                    if (vesp.MEMORY[0] == 0) {
+                        for(i = 12245; i<= 12248 && vesp.reset == 0; i++) maincycle(0); break;}
+
                     else
                         for(i = 12245; i<= 12248 && vesp.reset == 0; i++) maincycle(0);
                 }
+
 
                 break;
 
@@ -722,7 +767,9 @@ void kernel (void)
                     else
                         if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                        else {cout << "Invalid address. Try again.\n"; break;}
+                        else {
+                            cout << "Invalid address. Try again.\n"; break;}
+
 
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
 
@@ -730,7 +777,8 @@ void kernel (void)
                 //write using vesp.
 
                 while(programSize++ <= 256)
-                {//vesp.PC = 0x08A2;
+                {
+                    //vesp.PC = 0x08A2;
                     //check to stop writing if it is FFFF.
                     for(i = 12223; i<= 12226 && vesp.reset == 0; i++) maincycle(0);
                     if (vesp.MEMORY[0] == 0) break;
@@ -739,60 +787,84 @@ void kernel (void)
                     cout << hex << vesp.MEMORY[0x0018] << "\n";
                     for(i = 12227; i<= 12230 && vesp.reset == 0; i++) maincycle(0);
                 }
+
                 break;
 
         }
 
+
     }
+
 
 }
 
+
 int readprogram(void)
-{int address,instruction,progend,action,i;
+{
+    int address,instruction,progend,action,i;
     char longfilename[100] ="/UMD-Web-Dreamweaver/teaching/courses/enee350/vesp-source-code/vesp3.0XK/", filename[25]; 
     //The above path needs to be changed if the file is located in another directory. 
     FILE *file;
-    do{ cout << "Enter your program's starting " 
-        << "address ( >= 3) as a 3-digit hex number: ";
+    do{
+        cout << "Enter your program's starting " 
+            << "address ( >= 3) as a 3-digit hex number: ";
         cin >> hex >> vesp.PC; 
-    } while (vesp.PC < 3);
+    }
+    while (vesp.PC < 3);
 
     address =  vesp.PC; action = -1;
     cout << "\n";
-    do { cout << "Enter 0 to type in your program or 1 to read it from a file: ";
+    do {
+        cout << "Enter 0 to type in your program or 1 to read it from a file: ";
         cin >> action;
-    } while (action != 0 && action != 1);
+    }
+    while (action != 0 && action != 1);
 
     if(action == 1) 
-    {cout << "\nEnter the file name: "; cin >> filename;
+    {
+        cout << "\nEnter the file name: "; cin >> filename;
 
 
         file = fopen(filename,"r");
         if( file != NULL)
         {
+
             while (fscanf(file,"%x",&instruction) != EOF  &&  address < 8192 ) 
             {
+
                 vesp.MEMORY[address] = instruction; address = address + 1;
             }
+
             fclose(file); 
         }
+
         else
-        {for (i=0; i <= 24; i++) longfilename[i+72] = filename[i]; 
+        {
+            for (i=0; i <= 24; i++) longfilename[i+72] = filename[i]; 
             file = fopen(longfilename,"r");
             if( file != NULL)
             {
+
                 while (fscanf(file,"%x",&instruction) != EOF  &&  address < 8192 ) 
-                {vesp.MEMORY[address] = instruction; address = address + 1;}
+                {
+                    vesp.MEMORY[address] = instruction; address = address + 1;}
+
                 fclose(file); 
             }
+
             else
-            {cout << "The file is not found. Check if file to be opened is in the program directory... \n"; exit(1);}
+            {
+                cout << "The file is not found. Check if file to be opened is in the program directory... \n"; exit(1);}
+
 
 
         }
+
     }
+
     else  
-        do {cin.clear();
+        do {
+            cin.clear();
             cout << "Enter instruction  " 
                 << (address -vesp.PC)  
                 << " using a 4-digit hex number" << "\n";
@@ -802,12 +874,15 @@ int readprogram(void)
             vesp.MEMORY[address] = instruction;
             address = address + 1;
         }
+
         while ( ( vesp.MEMORY[address-1] !=  -1 ) && (address < 8192)); //AYO: -1 marks the end.
 
     if (address >= 4096) 
-    {cout << "Memory overflow," 
-        << "Please quit from the file menu and restart me!"; 
+    {
+        cout << "Memory overflow," 
+            << "Please quit from the file menu and restart me!"; 
         return address-1;}
+
     progend = address - 1; 
 
 
@@ -816,39 +891,53 @@ int readprogram(void)
     cin >> action;
 
     if(action == 1) 
-    {cout << "\nEnter the file name: "; cin >> filename;
+    {
+        cout << "\nEnter the file name: "; cin >> filename;
 
         cout << hex;
         file = fopen(filename,"w");
         if( file != NULL)
-        {address = vesp.PC;
+        {
+            address = vesp.PC;
             while (address < progend ) 
             {
+
                 fprintf(file,"%04X\n",vesp.MEMORY[address]); 
                 address = address + 1; 
             }
+
             fclose(file); 
         }
+
         else
-        {for (i=0; i <= 24; i++) longfilename[i+72] = filename[i]; 
+        {
+            for (i=0; i <= 24; i++) longfilename[i+72] = filename[i]; 
             file = fopen(longfilename,"w");
             if( file != NULL)
-            {address = vesp.PC;
+            {
+                address = vesp.PC;
                 cout << hex;
                 while (address < progend ) 
                 {
+
                     fprintf(file,"%04X\n",vesp.MEMORY[address]); 
                     address = address + 1; 
                 }
 
+
                 fclose(file); 
             }
+
             else
-            {cout << "The file is not found. Check if file to be opened is in the program directory... \n"; exit(1);}
+            {
+                cout << "The file is not found. Check if file to be opened is in the program directory... \n"; exit(1);}
+
 
 
         }
+
     }
+
 
 
     return progend;
@@ -856,20 +945,26 @@ int readprogram(void)
 }
 
 
+
 void displayprogram(int progend) 
-{int i; 
+{
+    int i; 
     cout << "\nHere is your program: \n\n";
     for (i = vesp.PC; i<= progend; i++)
     {
+
         cout << "Location "; cout.fill('0');  cout.width(4); cout.setf(ios::uppercase);
         cout <<  hex << i << ": ";  //AYO: display it in uppercase hex. 
 
         cout.fill('0');  cout.width(4); cout.setf(ios::uppercase);
         cout << hex << (0x0000FFFF & vesp.MEMORY[i]) << "\n";
     }
+
 }
+
 void displayregisters(void)
 {
+
     cout << "A = ";  cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
     cout << hex << (0x0000FFFF & vesp.MEMORY[0])<< ", "; 
     cout << "B = ";  cout.fill('0'); cout.width(4); cout.setf(ios::uppercase); 
@@ -892,8 +987,10 @@ void displayregisters(void)
     cout << "reset = " << vesp.reset << "\n";
 }
 
+
 void displaymemory(void)
-{int location1,location2,i; 
+{
+    int location1,location2,i; 
     cout << "Enter the first address (3 hex digits): ";
     cin.clear();
     cin >> hex >> location1;
@@ -903,90 +1000,119 @@ void displaymemory(void)
     cin >> hex >> location2;
     cin.clear();
     for (i = location1; i <= location2; i++)
-    {cout <<  "Location "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
+    {
+        cout <<  "Location "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
         cout << hex << i << " : "; 
         cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
         cout << hex << (0x0000FFFF & vesp.MEMORY[i]); cout << "\n"; 
     }
+
 }
 
-    void maincycle(int trace)
-{    if(trace == 1) 
-    {     
+
+void maincycle(int trace)
+{
+    if(trace == 1) 
+    {
+
         cout << "Machine Cycle "; 
         cout.fill('0'); cout.width(8); cout.setf(ios::uppercase);
         cout << hex << j << ": ";
     }
+
     j = j+1;
 
     //AYO: Fetch Step
     if(trace == 1)
-    {cout << "PC = ";  cout.fill('0'); 
+    {
+        cout << "PC = ";  cout.fill('0'); 
         cout.width(8); cout.setf(ios::uppercase);
         cout << hex << (vesp.PC & 0x0FFFFFFF) << ", ";     
         cout << "\nFETCH SUBCYCLE\n";
     }
+
     fetch(trace);
     if(trace == 1)
-    { cout << "\nClock cycle = " << vesp.clock << "\n";
+    {
+        cout << "\nClock cycle = " << vesp.clock << "\n";
         //AYO: Decode Step
         cout << "DECODE SUBCYCLE\n"; 
     }
+
     decode(trace);
     if(trace == 1)
     {
+
         cout << "Clock cycle = " << vesp.clock << "\n";               
         //AYO: Execute Step   
         cout << "EXECUTE SUBCYCLE"; 
-    } 
+    }
+
     vesp.add = vesp.cmp = 0;  
     execute(); 
     if(trace == 1)
     {
+
         cout << "\nClock cycle = " << vesp.clock << "\n\n";
     }
+
     //AYO: Display the registers 
 
     if(trace == 1)
     {
+
         displayregisters();  
         cout << "add = " << vesp.add << " "; 
         cout << "complement = " << vesp.cmp << "\n\n"; 
         if( (vesp.IR >> 12 ) == 2  ||  (vesp.IR   >> 12 ) == 3 || 
                 (vesp.IR >> 12 ) == 14  || (vesp.IR >> 12 ) == 15 ) 
-        {cout << "Memory["; 
+        {
+            cout << "Memory["; 
             cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
             cout << hex << (vesp.MAR) << "] = ";
             cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
             if(vesp.MAR >> 12 == 0) cout << hex << (0x0000FFFF & vesp.MEMORY[vesp.MAR])<< "\n\n";
             else
                 if((vesp.MAR >> 12) >= 1 && (vesp.MAR >> 12) <= 14) cout << hex << (0x0000FFFF & vesp.HDISK[vesp.MAR])<< "\n\n";
-        } 
-    }     
-}                  
+        }
+
+    }
+
+}
+
 void fetch(int trace)
-{       //clock cycle 1.  Load next instruction's address into MAR. 
+{
+    //clock cycle 1.  Load next instruction's address into MAR. 
     vesp.MAR =  vesp.PC; vesp.clock = vesp.clock +1;
     vesp.PC =   vesp.PC +1; //Increment PC.  
     //clock cycle 2.  Fetch the next Instruction into IR 
     if(trace == 1)        
-    {cout << "MAR = "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
-        cout << hex << vesp.MAR << ", ";} 
+    {
+        cout << "MAR = "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
+        cout << hex << vesp.MAR << ", ";}
+
     vesp.IR = vesp.MEMORY[vesp.MAR]; vesp.clock = vesp.clock +1; 
     if(trace == 1)         
-    {cout << "IR = "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
+    {
+        cout << "IR = "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
         cout << hex << vesp.IR << ", ";}
+
 }
+
 
 void decode(int trace)
 {
+
     if(trace == 1) 
-    {cout << "Decoded instruction is: "; 
+    {
+        cout << "Decoded instruction is: "; 
         switch( vesp.IR >> 12)   
         {
+
             case  0x0: 
                 switch(vesp.IR >> 8 & 0x000F)
-                { case 0x0: cout << "ADA\n"; break; // A  = A + B
+                {
+                    case 0x0: cout << "ADA\n"; break; // A  = A + B
                     case 0x1: cout << "ADB\n"; break; // B  = A + B
                     case 0x2: cout << "ADX\n"; break; // IX = IX + B
                     case 0x3: cout << "SUB\n"; break; // A  = A - B
@@ -997,6 +1123,7 @@ void decode(int trace)
                     case 0x8: cout << "CLX\n"; break; // IX = 0
                     case 0x9: cout << "CLV\n"; break; // VAR = 0
                 }
+
 
                 break; 
             case  0x1: cout <<  "CMP\n"; break;          
@@ -1009,7 +1136,8 @@ void decode(int trace)
 
             case  0x7: 
                        switch(vesp.IR >> 8 & 0x000F)
-                       {case 0x0: cout <<  "HLT\n"; break; //Halt
+                       {
+                           case 0x0: cout <<  "HLT\n"; break; //Halt
                            case 0x1: cout <<  "JAZ\n"; break; //Jump if A = 0
                            case 0x2: cout <<  "JAP\n"; break; //Jump if A > 0
                            case 0x3: cout <<  "JAN\n"; break; //Jump if A < 0
@@ -1020,154 +1148,174 @@ void decode(int trace)
                            case 0x8: cout <<  "JMB\n"; break; //Jump via B
                        }
 
+
                        break;
 
             case  0x8:
                        switch(vesp.IR >> 8 & 0x000F)
-                       {case 0: cout <<  "INA\n"; break; //Increment A
+                       {
+                           case 0: cout <<  "INA\n"; break; //Increment A
                            case 1: cout <<  "INB\n"; break; //Increment B
                            case 2: cout <<  "INX\n"; break; //Increment IX
-                       }		  
+                       }
+
                        break;		  
 
             case  0x9:
                        switch(vesp.IR >> 8 & 0x000F)
-                       {case 0x0: cout <<  "DEA\n"; break; //Decrement A
+                       {
+                           case 0x0: cout <<  "DEA\n"; break; //Decrement A
                            case 0x1: cout <<  "DEB\n"; break; //Decrement B
                            case 0x2: cout <<  "DEX\n"; break; //Decrement IX
-                       }		  
+                       }
+
                        break;
 
                        //AND                           
             case  0xA: 
                        switch(vesp.IR >> 8 & 0x000F)
-                       {case 0x0: cout <<  "ANA\n"; break; //A = A && B
+                       {
+                           case 0x0: cout <<  "ANA\n"; break; //A = A && B
                            case 0x1: cout <<  "ANB\n"; break; //B = A && B
-                       }		  
+                       }
+
                        break;
 
 
                        //IOR                            
             case  0xB: 
                        switch(vesp.IR >> 8 & 0x000F)
-                       {case 0x0: cout <<  "IOA\n"; break; //A = A || B
+                       {
+                           case 0x0: cout <<  "IOA\n"; break; //A = A || B
                            case 0x1: cout <<  "IOB\n"; break; //B = A || B
-                       }		  
+                       }
+
                        break;
 
                        //Shift left                      
             case  0xC: 
                        switch(vesp.IR >> 8 & 0x000F)
-                       {case 0x0: cout <<  "SLA\n"; break; //A = A << 1
+                       {
+                           case 0x0: cout <<  "SLA\n"; break; //A = A << 1
                            case 0x1: cout <<  "SLB\n"; break; //B = B << 1
-                       }		  
+                       }
+
                        break;
 
                        //Shift right                      
             case  0xD: 
                        switch(vesp.IR >> 8 & 0x000F)
-                       {case 0x0: cout <<  "SLA\n"; break; //A = A >> 1
+                       {
+                           case 0x0: cout <<  "SLA\n"; break; //A = A >> 1
                            case 0x1: cout <<  "SLB\n"; break; //B = B >> 1
-                       }		  
+                       }
+
                        break;
 
                        //Move from with index                    //Move to with index
             case  0xE: cout << "MXF\n"; break; case 0xF: cout << "MXT\n"; break;
 
-        }                    
+        }
+
     }
+
 }
 
+
 void execute(void)
-{ short temp;
+{
+    short temp;
     short A   = vesp.MEMORY[0];
     short B   = vesp.MEMORY[1];
     unsigned short IX  = vesp.MEMORY[2];
     short VAR = vesp.MEMORY[3];
     switch(vesp.IR >> 12) 
-    {//clock cycle 3.
+    {
+        //clock cycle 3.
         //Add 		  
         case  0x0: 
             switch(vesp.IR >> 8 & 0x000F)
-            { case 0x0: // A  = A + B
-                temp = A + B; vesp.clock = vesp.clock +1;                                        
-                if(A > 0 && B > 0 && temp  <  0 || 
-                        A < 0 && B < 0  && temp  >= 0) 
-                    vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
-                if (A < 0 && B < 0  || temp > 0 && 
-                        (A < 0 && B > 0 || A > 0 && B < 0)) 
-                    vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
-                A  = temp;   vesp.MEMORY[0] = A; //Save the sum in MEMORY[0]
-                //AYO: Set Zero Flag
-                if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
-                //AYO: Set Sign Flag          
-                vesp.S = (A & 0x8000 ) >> 15;  vesp.add = 1; 
-                break;
+            {
+                case 0x0: // A  = A + B
+                    temp = A + B; vesp.clock = vesp.clock +1;                                        
+                    if(A > 0 && B > 0 && temp  <  0 || 
+                            A < 0 && B < 0  && temp  >= 0) 
+                        vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
+                    if (A < 0 && B < 0  || temp > 0 && 
+                            (A < 0 && B > 0 || A > 0 && B < 0)) 
+                        vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
+                    A  = temp;   vesp.MEMORY[0] = A; //Save the sum in MEMORY[0]
+                    //AYO: Set Zero Flag
+                    if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
+                    //AYO: Set Sign Flag          
+                    vesp.S = (A & 0x8000 ) >> 15;  vesp.add = 1; 
+                    break;
 
                 case 0x1:  // B  = A + B 
-                B = A + B; vesp.clock = vesp.clock +1;
-                vesp.MEMORY[1] = B; //Save the sum in MEMORY[1]
-                //AYO: Set Zero Flag
-                vesp.add = 1;
-                break; 
+                    B = A + B; vesp.clock = vesp.clock +1;
+                    vesp.MEMORY[1] = B; //Save the sum in MEMORY[1]
+                    //AYO: Set Zero Flag
+                    vesp.add = 1;
+                    break; 
 
                 case 0x2: // IX = IX + A
-                IX = IX + A; vesp.clock = vesp.clock +1;
-                vesp.MEMORY[2] = IX; //Save the sum in MEMORY[2]
-                vesp.add = 1;
-                break;
+                    IX = IX + A; vesp.clock = vesp.clock +1;
+                    vesp.MEMORY[2] = IX; //Save the sum in MEMORY[2]
+                    vesp.add = 1;
+                    break;
 
                 case 0x3: // A  = A - B
-                temp = A - B; vesp.clock = vesp.clock +1;                                        
-                if(A > 0 && B < 0 && temp  <  0 || 
-                        A < 0 && B > 0  && temp  >= 0) 
-                    vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
-                if (A < 0 && B > 0  || temp > 0 && 
-                        (A < 0 && B < 0 || A > 0 && B > 0)) 
-                    vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
-                A  = temp;   vesp.MEMORY[0] = A; //Save the sum in MEMORY[0]
-                //AYO: Set Zero Flag
-                if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
-                //AYO: Set Sign Flag          
-                vesp.S = (A & 0x8000 ) >> 15;  vesp.sub = 1;
-                break;
+                    temp = A - B; vesp.clock = vesp.clock +1;                                        
+                    if(A > 0 && B < 0 && temp  <  0 || 
+                            A < 0 && B > 0  && temp  >= 0) 
+                        vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
+                    if (A < 0 && B > 0  || temp > 0 && 
+                            (A < 0 && B < 0 || A > 0 && B > 0)) 
+                        vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
+                    A  = temp;   vesp.MEMORY[0] = A; //Save the sum in MEMORY[0]
+                    //AYO: Set Zero Flag
+                    if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
+                    //AYO: Set Sign Flag          
+                    vesp.S = (A & 0x8000 ) >> 15;  vesp.sub = 1;
+                    break;
 
                 case 0x4: // B = B - A
-                B = B - A; vesp.clock = vesp.clock +1;
-                vesp.MEMORY[1] = B; //Save the sum in MEMORY[1]
-                vesp.sub = 1;
-                break;	
+                    B = B - A; vesp.clock = vesp.clock +1;
+                    vesp.MEMORY[1] = B; //Save the sum in MEMORY[1]
+                    vesp.sub = 1;
+                    break;	
 
                 case 0x5: // IX = IX - A
-                IX = IX - A; vesp.clock = vesp.clock +1;
-                vesp.MEMORY[2] = IX; //Save the sum in MEMORY[2]
-                vesp.sub = 1;
-                break;
+                    IX = IX - A; vesp.clock = vesp.clock +1;
+                    vesp.MEMORY[2] = IX; //Save the sum in MEMORY[2]
+                    vesp.sub = 1;
+                    break;
 
                 case 0x6: // A = 0
-                A = 0; vesp.clock = vesp.clock +1;
-                vesp.MEMORY[0] = A; //Clear MEMORY[0]
-                //AYO: Set Zero Flag
-                vesp.Z = 1;
-                break;
+                    A = 0; vesp.clock = vesp.clock +1;
+                    vesp.MEMORY[0] = A; //Clear MEMORY[0]
+                    //AYO: Set Zero Flag
+                    vesp.Z = 1;
+                    break;
 
                 case 0x7: // B = 0
-                B = 0; vesp.clock = vesp.clock +1;
-                vesp.MEMORY[1] = B; //Clear MEMORY[1]
-                break;
+                    B = 0; vesp.clock = vesp.clock +1;
+                    vesp.MEMORY[1] = B; //Clear MEMORY[1]
+                    break;
 
 
                 case 0x8: // IX = 0
-                IX = 0; vesp.clock = vesp.clock +1;
-                vesp.MEMORY[2] = IX; //Clear MEMORY[2]
-                break;
+                    IX = 0; vesp.clock = vesp.clock +1;
+                    vesp.MEMORY[2] = IX; //Clear MEMORY[2]
+                    break;
 
                 case 0x9: // VAR = 0
-                VAR = 0; vesp.clock = vesp.clock +1;
-                vesp.MEMORY[3] = VAR; //Clear MEMORY[3]
-                break;
+                    VAR = 0; vesp.clock = vesp.clock +1;
+                    vesp.MEMORY[3] = VAR; //Clear MEMORY[3]
+                    break;
 
             }
+
 
             break; 
 
@@ -1183,17 +1331,23 @@ void execute(void)
                     vesp.clock = vesp.clock +1; 
                     vesp.MDR = vesp.MEMORY[vesp.MAR];
                     if(VAR==0)
-                    {vesp.MAR = vesp.IR&0x0FFF; //without an extra clock
+                    {
+                        vesp.MAR = vesp.IR&0x0FFF; //without an extra clock
                         vesp.MEMORY[vesp.MAR] = vesp.MDR;}
+
                     else if ( VAR >= 1 &&  VAR <= 14)
                     {
+
                         vesp.MAR = (VAR << 12)|vesp.IR&0x0FFF;
                         vesp.HDISK[vesp.MAR] = vesp.MDR ;
-                    } 
+                    }
+
                     else {
+
                         cout << "\n page fault- instruction not executed!\n";
                         // This will be a place to call a trap and exit to the OS.
                     }
+
                     vesp.clock = vesp.clock +1; vesp.lda = 1;
                     //AYO: Set Zero Flag
                     if(vesp.MAR == 0 && A == 0) vesp.Z = 1; else vesp.Z = 0; 
@@ -1211,20 +1365,28 @@ void execute(void)
                    if(vesp.MAR >> 12 == 0) vesp.MDR = vesp.MEMORY[vesp.MAR];
                    else if ( (vesp.MAR >> 12) >= 1 && (vesp.MAR >> 12)  <= 14)
                        vesp.MDR = vesp.HDISK[vesp.MAR];
-                   else {cout << "\n page fault- instruction not executed!\n";
+                   else {
+                       cout << "\n page fault- instruction not executed!\n";
                        // This will be a place to call a trap and exit to the OS.
                    }
+
                    if(VAR==0)
-                   {vesp.MAR = vesp.IR&0x0FFF; //without an extra clock
+                   {
+                       vesp.MAR = vesp.IR&0x0FFF; //without an extra clock
                        vesp.MEMORY[vesp.MAR] = vesp.MDR;
                    }
+
                    else if (VAR >= 1 && VAR <= 14)
-                   {vesp.MAR = (VAR << 12)|vesp.IR&0x0FFF;
-                       vesp.HDISK[vesp.MAR]=vesp.MDR;} 
+                   {
+                       vesp.MAR = (VAR << 12)|vesp.IR&0x0FFF;
+                       vesp.HDISK[vesp.MAR]=vesp.MDR;}
+
                    else
-                   {cout << "\n page fault- instruction not executed!\n";
+                   {
+                       cout << "\n page fault- instruction not executed!\n";
                        // This will be a place to call a trap and exit to the OS.
                    }
+
                    vesp.clock = vesp.clock + 1; vesp.mov = 1;
                    //AYO: Set Zero Flag
                    if(vesp.MAR == 0 && A == 0) vesp.Z = 1; else vesp.Z = 0; 
@@ -1237,33 +1399,50 @@ void execute(void)
                     vesp.clock = vesp.clock +1; break;  
                     //Jump if A is  0
         case 0x5:   if (A == 0) 
-                    {vesp.PC = vesp.IR & 0x0FFF;} vesp.jez = 1;
+                    {
+                        vesp.PC = vesp.IR & 0x0FFF;}
+                    vesp.jez = 1;
                     vesp.clock = vesp.clock +1; break;  
                     //Jump if A is > 0
         case 0x6: if (A > 0) 
-                  {vesp.PC = vesp.IR & 0x0FFF;} vesp.jps = 1;
+                  {
+                      vesp.PC = vesp.IR & 0x0FFF;}
+                  vesp.jps = 1;
                   vesp.clock = vesp.clock +1; break;  
                   //Halt and extended branch
         case 0x7:  
                   switch(vesp.IR >> 8 & 0x000F)
-                  {case 0x0: vesp.reset = true;  vesp.clock = vesp.clock +1; break; //HLT
+                  {
+                      case 0x0: vesp.reset = true;  vesp.clock = vesp.clock +1; break; //HLT
                       case 0x1: if (A == 0) 
-                                {vesp.PC = B;} vesp.jap = 1;
+                                {
+                                    vesp.PC = B;}
+                                vesp.jap = 1;
                                 vesp.clock = vesp.clock +1; break;  //Jump if A > 0
                       case 0x2:  if (A > 0) 
-                                 {vesp.PC = B;} vesp.jaz = 1;
+                                 {
+                                     vesp.PC = B;}
+                                 vesp.jaz = 1;
                                  vesp.clock = vesp.clock +1; break;  //Jump if A = 0
                       case 0x3: if (A < 0) 
-                                {vesp.PC = B;} vesp.jng = 1;
+                                {
+                                    vesp.PC = B;}
+                                vesp.jng = 1;
                                 vesp.clock = vesp.clock +1; break;  //Jump if A < 0
                       case 0x4:  if (A >= 0) 
-                                 {vesp.PC = B;} vesp.jpz = 1;
+                                 {
+                                     vesp.PC = B;}
+                                 vesp.jpz = 1;
                                  vesp.clock = vesp.clock +1; break;  //Jump if A >= 0
                       case 0x5:  if (A <= 0) 
-                                 {vesp.PC = B;} vesp.jnz = 1;
+                                 {
+                                     vesp.PC = B;}
+                                 vesp.jnz = 1;
                                  vesp.clock = vesp.clock +1; break;  //Jump if A <= 0
                       case 0x6:  if (A != 0) 
-                                 {vesp.PC = B;} vesp.jnz = 1;
+                                 {
+                                     vesp.PC = B;}
+                                 vesp.jnz = 1;
                                  vesp.clock = vesp.clock +1; break;  //Jump if A <= 0
 
                       case 0x7: vesp.clock = vesp.clock +1; vesp.nop = 1; break;  //NOP
@@ -1273,202 +1452,218 @@ void execute(void)
                                 vesp.clock = vesp.clock +1; break;  //Jump via register B
 
                   }
+
                   break;
 
         case  0x8: //Increment 
                   switch(vesp.IR >> 8 & 0x000F)
-                  {case 0x0://Increment A
-                      temp = A + 1; vesp.clock = vesp.clock +1;                                        
-                      if(A > 0  && temp  <  0 ) 
-                          vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
-                      if ( A == -1) 
-                          vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
-                      A  = temp;   vesp.MEMORY[0] = A;  //Save the sum in MEMORY[0]
-                      //AYO: Set Zero Flag
-                      if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
-                      //AYO: Set Sign Flag          
-                      vesp.S = (A & 0x8000 ) >> 15;  vesp.ina = 1; break;
-                      //AYO: In this implementation, vesp.inc is just symbolically set to 1.
-                      //In a bus implementation, the input bus must be loaded with 1 and the 
-                      //vesp's computation engine must be programmed to add its operands.
+                  {
+                      case 0x0://Increment A
+                          temp = A + 1; vesp.clock = vesp.clock +1;                                        
+                          if(A > 0  && temp  <  0 ) 
+                              vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
+                          if ( A == -1) 
+                              vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
+                          A  = temp;   vesp.MEMORY[0] = A;  //Save the sum in MEMORY[0]
+                          //AYO: Set Zero Flag
+                          if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
+                          //AYO: Set Sign Flag          
+                          vesp.S = (A & 0x8000 ) >> 15;  vesp.ina = 1; break;
+                          //AYO: In this implementation, vesp.inc is just symbolically set to 1.
+                          //In a bus implementation, the input bus must be loaded with 1 and the 
+                          //vesp's computation engine must be programmed to add its operands.
 
                       case 0x1: //Increment B
-                      temp = B + 1; vesp.clock = vesp.clock +1;                                        
-                      if(B > 0  && temp  <  0 ) 
-                          vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
-                      if ( B == -1) 
-                          vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
-                      B  = temp;   vesp.MEMORY[1] = B;  //Save the sum in MEMORY[1]
-                      //AYO: Set Zero Flag
-                      if(B  == 0) vesp.Z = 1; else vesp.Z = 0; 
-                      //AYO: Set Sign Flag          
-                      vesp.S = (B & 0x8000 ) >> 15;  vesp.inb = 1; break;
-                      //AYO: In this implementation, vesp.inc is just symbolically set to 1.
-                      //In a bus implementation, the input bus must be loaded with 1 and the 
-                      //vesp's computation engine must be programmed to add its operands.
+                          temp = B + 1; vesp.clock = vesp.clock +1;                                        
+                          if(B > 0  && temp  <  0 ) 
+                              vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
+                          if ( B == -1) 
+                              vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
+                          B  = temp;   vesp.MEMORY[1] = B;  //Save the sum in MEMORY[1]
+                          //AYO: Set Zero Flag
+                          if(B  == 0) vesp.Z = 1; else vesp.Z = 0; 
+                          //AYO: Set Sign Flag          
+                          vesp.S = (B & 0x8000 ) >> 15;  vesp.inb = 1; break;
+                          //AYO: In this implementation, vesp.inc is just symbolically set to 1.
+                          //In a bus implementation, the input bus must be loaded with 1 and the 
+                          //vesp's computation engine must be programmed to add its operands.
 
                       case 0x2: //Increment IX
-                      temp = IX + 1; vesp.clock = vesp.clock +1;                                        
-                      if(IX > 0  && temp  <  0 ) 
-                          vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
-                      if ( (short) IX == -1) 
-                          vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
-                      IX  = temp;   vesp.MEMORY[2] = IX;  //Save the sum in MEMORY[2]
-                      //AYO: Set Zero Flag
-                      if(IX  == 0) vesp.Z = 1; else vesp.Z = 0; 
-                      //AYO: Set Sign Flag          
-                      vesp.S = (IX & 0x8000 ) >> 15;  vesp.inx = 1; break;
-                      //AYO: In this implementation, vesp.inc is just symbolically set to 1.
-                      //In a bus implementation, the input bus must be loaded with 1 and the 
-                      //vesp's computation engine must be programmed to add its operands.
-                  }		  
+                          temp = IX + 1; vesp.clock = vesp.clock +1;                                        
+                          if(IX > 0  && temp  <  0 ) 
+                              vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
+                          if ( (short) IX == -1) 
+                              vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
+                          IX  = temp;   vesp.MEMORY[2] = IX;  //Save the sum in MEMORY[2]
+                          //AYO: Set Zero Flag
+                          if(IX  == 0) vesp.Z = 1; else vesp.Z = 0; 
+                          //AYO: Set Sign Flag          
+                          vesp.S = (IX & 0x8000 ) >> 15;  vesp.inx = 1; break;
+                          //AYO: In this implementation, vesp.inc is just symbolically set to 1.
+                          //In a bus implementation, the input bus must be loaded with 1 and the 
+                          //vesp's computation engine must be programmed to add its operands.
+                  }
+
                   break;		  
 
         case  0x9: //Decrement 
                   switch(vesp.IR >> 8 & 0x000F)
-                  {case 0x0: //Decrement A
-                      temp = A - 1; vesp.clock = vesp.clock +1;                                        
-                      if( A < 0  && temp  >= 0) 
-                          vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
-                      if (A == 0x0000) 
-                          vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
-                      A  = temp;  vesp.MEMORY[0] = A;   //Save the sum in MEMORY[0]
-                      //AYO: Set Zero Flag
-                      if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
-                      //AYO: Set Sign Flag          
-                      vesp.S = (A & 0x8000 ) >> 15;  vesp.dea = 1; break;		   
-                      //AYO: In this implementation, vesp.dec is just symbolically set to 1.
-                      //In a bus implementation, the input bus must be loaded with 1 and complemented;
-                      // carry-in must be set to vesp.dec, and the vesp's computation engine  
-                      // must be programmed to add its operands.
+                  {
+                      case 0x0: //Decrement A
+                          temp = A - 1; vesp.clock = vesp.clock +1;                                        
+                          if( A < 0  && temp  >= 0) 
+                              vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
+                          if (A == 0x0000) 
+                              vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
+                          A  = temp;  vesp.MEMORY[0] = A;   //Save the sum in MEMORY[0]
+                          //AYO: Set Zero Flag
+                          if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
+                          //AYO: Set Sign Flag          
+                          vesp.S = (A & 0x8000 ) >> 15;  vesp.dea = 1; break;		   
+                          //AYO: In this implementation, vesp.dec is just symbolically set to 1.
+                          //In a bus implementation, the input bus must be loaded with 1 and complemented;
+                          // carry-in must be set to vesp.dec, and the vesp's computation engine  
+                          // must be programmed to add its operands.
 
                       case 0x1: //Decrement B
-                      temp = B - 1; vesp.clock = vesp.clock +1;                                        
-                      if( B < 0  && temp  >= 0) 
-                          vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
-                      if (B == 0x0000) 
-                          vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
-                      B  = temp;  vesp.MEMORY[1] = B;   //Save the sum in MEMORY[1]
-                      //AYO: Set Zero Flag
-                      if(B  == 0) vesp.Z = 1; else vesp.Z = 0; 
-                      //AYO: Set Sign Flag          
-                      vesp.S = (B & 0x8000 ) >> 15;  vesp.deb = 1; break;
-                      //AYO: In this implementation, vesp.dec is just symbolically set to 1.
-                      //In a bus implementation, the input bus must be loaded with 1 and complemented;
-                      // carry-in must be set to vesp.dec, and the vesp's computation engine  
-                      // must be programmed to add its operands.
+                          temp = B - 1; vesp.clock = vesp.clock +1;                                        
+                          if( B < 0  && temp  >= 0) 
+                              vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
+                          if (B == 0x0000) 
+                              vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
+                          B  = temp;  vesp.MEMORY[1] = B;   //Save the sum in MEMORY[1]
+                          //AYO: Set Zero Flag
+                          if(B  == 0) vesp.Z = 1; else vesp.Z = 0; 
+                          //AYO: Set Sign Flag          
+                          vesp.S = (B & 0x8000 ) >> 15;  vesp.deb = 1; break;
+                          //AYO: In this implementation, vesp.dec is just symbolically set to 1.
+                          //In a bus implementation, the input bus must be loaded with 1 and complemented;
+                          // carry-in must be set to vesp.dec, and the vesp's computation engine  
+                          // must be programmed to add its operands.
 
                       case 0x2: //Decrement IX
-                      temp = IX - 1; vesp.clock = vesp.clock +1;                                        
-                      if( (short) IX < 0  && temp  >= 0) 
-                          vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
-                      if (IX == 0x0000) 
-                          vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
-                      IX  = temp;  vesp.MEMORY[2] = IX;   //Save the sum in MEMORY[2]
-                      //AYO: Set Zero Flag
-                      if(IX  == 0) vesp.Z = 1; else vesp.Z = 0; 
-                      //AYO: Set Sign Flag          
-                      vesp.S = (IX & 0x8000 ) >> 15;  vesp.dex = 1; break;
-                      //AYO: In this implementation, vesp.dec is just symbolically set to 1.
-                      //In a bus implementation, the input bus must be loaded with 1 and complemented;
-                      // carry-in must be set to vesp.dec, and the vesp's computation engine  
-                      // must be programmed to add its operands.
+                          temp = IX - 1; vesp.clock = vesp.clock +1;                                        
+                          if( (short) IX < 0  && temp  >= 0) 
+                              vesp.F = 1; else vesp.F = 0; //AYO: Set Overflow Flag
+                          if (IX == 0x0000) 
+                              vesp.C = 1; else vesp.C = 0; //AYO: Set Carry Flag
+                          IX  = temp;  vesp.MEMORY[2] = IX;   //Save the sum in MEMORY[2]
+                          //AYO: Set Zero Flag
+                          if(IX  == 0) vesp.Z = 1; else vesp.Z = 0; 
+                          //AYO: Set Sign Flag          
+                          vesp.S = (IX & 0x8000 ) >> 15;  vesp.dex = 1; break;
+                          //AYO: In this implementation, vesp.dec is just symbolically set to 1.
+                          //In a bus implementation, the input bus must be loaded with 1 and complemented;
+                          // carry-in must be set to vesp.dec, and the vesp's computation engine  
+                          // must be programmed to add its operands.
 
-                  }	
+                  }
+
                   break;	  
 
                   //And
         case  0xA: 
                   switch(vesp.IR >> 8 & 0x000F)
-                  {case 0x0: //A = A && B
-                      temp = A & B; vesp.clock = vesp.clock +1;                                        
-                      A  = temp;   vesp.MEMORY[0] = A;  //Save the sum in MEMORY[0]
-                      //AYO: Set Zero Flag
-                      if(A  == 0) vesp.Z = 1; else vesp.Z = 0; vesp.ana = 1; break;
+                  {
+                      case 0x0: //A = A && B
+                          temp = A & B; vesp.clock = vesp.clock +1;                                        
+                          A  = temp;   vesp.MEMORY[0] = A;  //Save the sum in MEMORY[0]
+                          //AYO: Set Zero Flag
+                          if(A  == 0) vesp.Z = 1; else vesp.Z = 0; vesp.ana = 1; break;
 
                       case 0x1://B = A && B
-                      temp = A & B; vesp.clock = vesp.clock +1;                                        
-                      B  = temp;   vesp.MEMORY[1] = B;  //Save the sum in MEMORY[1]
-                      //AYO: Set Zero Flag
-                      if(B  == 0) vesp.Z = 1; else vesp.Z = 0; vesp.anb = 1;  break;
-                  }		  
+                          temp = A & B; vesp.clock = vesp.clock +1;                                        
+                          B  = temp;   vesp.MEMORY[1] = B;  //Save the sum in MEMORY[1]
+                          //AYO: Set Zero Flag
+                          if(B  == 0) vesp.Z = 1; else vesp.Z = 0; vesp.anb = 1;  break;
+                  }
+
                   break;
 
 
                   //Or
         case  0xB: 
                   switch(vesp.IR >> 8 & 0x000F)
-                  {case 0x0:  //A = A || B
-                      temp = A | B; vesp.clock = vesp.clock +1;                                        
-                      A  = temp;   vesp.MEMORY[0] = A;  //Save the sum in MEMORY[0]
-                      //AYO: Set Zero Flag
-                      if(A  == 0) vesp.Z = 1; else vesp.Z = 0;  vesp.ioa = 1; break;
+                  {
+                      case 0x0:  //A = A || B
+                          temp = A | B; vesp.clock = vesp.clock +1;                                        
+                          A  = temp;   vesp.MEMORY[0] = A;  //Save the sum in MEMORY[0]
+                          //AYO: Set Zero Flag
+                          if(A  == 0) vesp.Z = 1; else vesp.Z = 0;  vesp.ioa = 1; break;
 
                       case 0x1: //B = A || B
-                      temp = A | B; vesp.clock = vesp.clock +1;                                        
-                      B = temp;   vesp.MEMORY[1] = B;  //Save the sum in MEMORY[1]
-                      //AYO: Set Zero Flag
-                      if(B  == 0) vesp.Z = 1; else vesp.Z = 0;  vesp.iob = 1; break;
-                  }		  
+                          temp = A | B; vesp.clock = vesp.clock +1;                                        
+                          B = temp;   vesp.MEMORY[1] = B;  //Save the sum in MEMORY[1]
+                          //AYO: Set Zero Flag
+                          if(B  == 0) vesp.Z = 1; else vesp.Z = 0;  vesp.iob = 1; break;
+                  }
+
                   break;
 
 
                   //shift left
         case  0xC: 
                   switch(vesp.IR >> 8 & 0x000F)
-                  {case 0x0://A = A << 1
-                      temp = A << 1; vesp.clock = vesp.clock +1;                                        
-                      A  = temp;  vesp.MEMORY[0] = A;  //Save the sum in MEMORY[0]
-                      //AYO: Set Zero Flag
-                      if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
-                      //AYO: Set Sign Flag          
-                      vesp.S = (A & 0x8000 ) >> 15;  vesp.sla = 1; break;
+                  {
+                      case 0x0://A = A << 1
+                          temp = A << 1; vesp.clock = vesp.clock +1;                                        
+                          A  = temp;  vesp.MEMORY[0] = A;  //Save the sum in MEMORY[0]
+                          //AYO: Set Zero Flag
+                          if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
+                          //AYO: Set Sign Flag          
+                          vesp.S = (A & 0x8000 ) >> 15;  vesp.sla = 1; break;
 
                       case 0x1: //B = B << 1
-                      temp = B << 1; vesp.clock = vesp.clock +1;                                        
-                      B  = temp;  vesp.MEMORY[1] = B;  //Save the sum in MEMORY[1]
-                      //AYO: Set Zero Flag
-                      if(B  == 0) vesp.Z = 1; else vesp.Z = 0; 
-                      //AYO: Set Sign Flag          
-                      vesp.S = (B & 0x8000 ) >> 15;  vesp.slb = 1; break;
-                  }		  
+                          temp = B << 1; vesp.clock = vesp.clock +1;                                        
+                          B  = temp;  vesp.MEMORY[1] = B;  //Save the sum in MEMORY[1]
+                          //AYO: Set Zero Flag
+                          if(B  == 0) vesp.Z = 1; else vesp.Z = 0; 
+                          //AYO: Set Sign Flag          
+                          vesp.S = (B & 0x8000 ) >> 15;  vesp.slb = 1; break;
+                  }
+
                   break;
 
 
                   //Shift right
         case  0xD: 
                   switch(vesp.IR >> 8 & 0x000F)
-                  {case 0x0://A = A >> 1
-                      temp = A >> 1; vesp.clock = vesp.clock +1;                                        
-                      A  = temp;  vesp.MEMORY[0] = A;   //Save the sum in MEMORY[0]
-                      //AYO: Set Zero Flag
-                      if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
-                      //AYO: Set Sign Flag          
-                      vesp.S = (A & 0x8000 ) >> 15;  vesp.sra = 1; break;
+                  {
+                      case 0x0://A = A >> 1
+                          temp = A >> 1; vesp.clock = vesp.clock +1;                                        
+                          A  = temp;  vesp.MEMORY[0] = A;   //Save the sum in MEMORY[0]
+                          //AYO: Set Zero Flag
+                          if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
+                          //AYO: Set Sign Flag          
+                          vesp.S = (A & 0x8000 ) >> 15;  vesp.sra = 1; break;
 
                       case 0x1: //B = B >> 1
-                      temp = B >> 1; vesp.clock = vesp.clock +1;                                        
-                      B  = temp;  vesp.MEMORY[1] = B;   //Save the sum in MEMORY[1]
-                      //AYO: Set Zero Flag
-                      if(B  == 0) vesp.Z = 1; else vesp.Z = 0; 
-                      //AYO: Set Sign Flag          
-                      vesp.S = (B & 0x8000 ) >> 15;  vesp.srb = 1; break;
-                  }		  
+                          temp = B >> 1; vesp.clock = vesp.clock +1;                                        
+                          B  = temp;  vesp.MEMORY[1] = B;   //Save the sum in MEMORY[1]
+                          //AYO: Set Zero Flag
+                          if(B  == 0) vesp.Z = 1; else vesp.Z = 0; 
+                          //AYO: Set Sign Flag          
+                          vesp.S = (B & 0x8000 ) >> 15;  vesp.srb = 1; break;
+                  }
+
                   break;
 
                   //MXF (index is used to copy a list of operands into a location one at a time.)
         case  14: 
                   if(VAR == 0)
-                  {vesp.MAR = IX; // read the next operand (assuming that IX holds a 16 bit address always.)
+                  {
+                      vesp.MAR = IX; // read the next operand (assuming that IX holds a 16 bit address always.)
                       vesp.clock = vesp.clock +1;  
                       if((( vesp.MAR) >> 12) == 0)
                           vesp.MDR = vesp.MEMORY[vesp.MAR]; 
                       else if ((vesp.MAR >> 12) >= 1 && ((vesp.MAR >> 12) <= 14))
                           vesp.MDR = vesp.HDISK[vesp.MAR]; 
                       else
-                      {cout << "\n page fault- instruction not executed!\n";
+                      {
+                          cout << "\n page fault- instruction not executed!\n";
                           // This will be a place to call a trap and exit to the OS. 
-                      }                  
+                      }
+
                       vesp.MAR = vesp.IR&0x0FFF; //without an extra clock
                       vesp.clock = vesp.clock +1;  
                       vesp.MEMORY[vesp.MAR] = vesp.MDR;  // move the operand to the specified address
@@ -1476,27 +1671,34 @@ void execute(void)
                       vesp.clock = vesp.clock +1;		  
                   }
 
+
                   else if(VAR >= 1 && VAR <= 14) 
-                  {vesp.MAR = IX; // read the next operand
+                  {
+                      vesp.MAR = IX; // read the next operand
                       vesp.clock = vesp.clock +1; 
                       if (((vesp.MAR) >> 12) == 0) 
                           vesp.MDR = vesp.MEMORY[vesp.MAR]; 
                       else if ((vesp.MAR >> 12) >= 1 && ((vesp.MAR >> 12) <= 14))
                           vesp.MDR = vesp.HDISK[vesp.MAR]; 
                       else
-                      {cout << "\n page fault- instruction not executed!\n";
+                      {
+                          cout << "\n page fault- instruction not executed!\n";
                           // This will be a place to call a trap and exit to the OS. 
-                      }                  
+                      }
+
                       vesp.MAR = vesp.IR&0x0FFF; //without an extra clock
                       vesp.clock = vesp.clock +1;  
                       vesp.HDISK[vesp.MAR | (VAR << 12)] = vesp.MDR;  // move the operand to the specified address
                       IX = IX+1; vesp.MEMORY[2] = IX; //without an extra clock
                       vesp.clock = vesp.clock +1;
                   }
+
                   else
-                  {cout << "\n page fault- instruction not executed!\n";
+                  {
+                      cout << "\n page fault- instruction not executed!\n";
                       // This will be a place to call a trap and exit to the OS. 
-                  }                                  
+                  }
+
                   //AYO: Set Zero Flag
                   if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
                   //AYO: Set Sign Flag          
@@ -1505,7 +1707,8 @@ void execute(void)
                   //MXT (index register is used to copy an operand to a set of locations one at a time.)
         case  15: 
                   if((IX >> 12)  == 0) //destination is in vesp.MEMORY (and IX always holds a 16-bit address.)
-                  { vesp.MAR = vesp.IR&0x0FFF; // read the operand
+                  {
+                      vesp.MAR = vesp.IR&0x0FFF; // read the operand
                       vesp.clock = vesp.clock +1; 
                       if(vesp.VAR == 0)           
                           vesp.MDR = vesp.MEMORY[vesp.MAR];
@@ -1513,9 +1716,11 @@ void execute(void)
                           if(vesp.VAR  >= 1 && vesp.VAR  <= 14) 
                               vesp.MDR = vesp.HDISK[vesp.MAR | (VAR << 12)];
                           else  
-                          {cout << "\npage fault- instruction not executed!\n";
+                          {
+                              cout << "\npage fault- instruction not executed!\n";
                               // This will be a place to call a trap and exit to the OS. 
-                          }                                                              
+                          }
+
                       vesp.MAR = IX; //without an extra clock
                       vesp.clock = vesp.clock +1; 
                       vesp.MEMORY[vesp.MAR] = vesp.MDR; //move the operand to the next location
@@ -1523,8 +1728,10 @@ void execute(void)
                       vesp.clock = vesp.clock +1; 
 
                   }
+
                   else if((IX>> 12) >= 1  && ( IX >> 12) <= 14) //destination is in vesp.HDISK
-                  { vesp.MAR = vesp.IR&0x0FFF; // read the operand
+                  {
+                      vesp.MAR = vesp.IR&0x0FFF; // read the operand
                       vesp.clock = vesp.clock +1; 
                       if(vesp.VAR == 0)           
                           vesp.MDR = vesp.MEMORY[vesp.MAR];
@@ -1532,26 +1739,33 @@ void execute(void)
                           if(vesp.VAR  >= 1 && vesp.VAR  <= 14) 
                               vesp.MDR = vesp.HDISK[vesp.MAR | (VAR << 12)];			 
                           else
-                          {cout << "\npage fault- instruction not executed!\n";
+                          {
+                              cout << "\npage fault- instruction not executed!\n";
                               // This will be a place to call a trap and exit to the OS. 
-                          }                                            
+                          }
+
                       vesp.MAR = (short) IX; //without an extra clock
                       vesp.clock = vesp.clock +1; 
                       vesp.HDISK[vesp.MAR] = vesp.MDR; //move the operand to the next location
                       IX = IX+1; vesp.MEMORY[2] = IX; //without an extra clock
                       vesp.clock = vesp.clock +1; 
                   }
+
                   else
-                  {cout << "\npage fault- instruction not executed!\n";  
+                  {
+                      cout << "\npage fault- instruction not executed!\n";  
                       // This will be a place to call a trap and exit to the OS. 
-                  }                                  
+                  }
+
                   //AYO: Set Zero Flag
                   if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
                   //AYO: Set Sign Flag          
                   vesp.S = (A & 0x8000 ) >> 15;  vesp.mxt = 1; break;        
-    }  
+    }
+
 
 }
+
 
 //Sample runs
 /*

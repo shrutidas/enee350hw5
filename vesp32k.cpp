@@ -220,7 +220,8 @@ typedef struct
     short   BOOTSTRAP[512],SCREEN[16][64],HDISK[65536];
     short   newcommand, readcommand;
 }
-architecture;  architecture   vesp;
+architecture;
+architecture   vesp;
 using namespace std;
 int j=1;
 int main(void)
@@ -530,7 +531,8 @@ void kernel (void)
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
                         else 
                         {
-                            cout << "Invalid address. Try again.\n"; break;
+                            cout << "Invalid address. Try again.\n";
+                            break;
                         }
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013]; //Disk address
                 vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017]; //RAM address
@@ -541,7 +543,8 @@ void kernel (void)
                     for(i = 12235; i<= 12238 && vesp.reset == 0; i++) maincycle(0);
                     if (vesp.MEMORY[0] == 0) 
                     {
-                        for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;
+                        for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0);
+                        break;
                     }
                     else
                         for(i = 12239; i<= 12246 && vesp.reset == 0; i++) maincycle(0);
@@ -567,7 +570,8 @@ void kernel (void)
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
                         else 
                         {
-                            cout << "Invalid address. Try again.\n"; break;
+                            cout << "Invalid address. Try again.\n";
+                            break;
                         }
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013]; //RAM address
                 vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017]; //Disk address
@@ -578,7 +582,8 @@ void kernel (void)
                     for(i = 12235; i<= 12238 && vesp.reset == 0; i++) maincycle(0);
                     if (vesp.MEMORY[0] == 0) //Check if the end of save is reached
                     {
-                        for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;
+                        for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0);
+                        break;
                     }
                     else
                         for(i = 12239; i<= 12246 && vesp.reset == 0; i++) maincycle(0);
@@ -599,7 +604,8 @@ void kernel (void)
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
                         else 
                         {
-                            cout << "Invalid address. Try again.\n"; break;
+                            cout << "Invalid address. Try again.\n";
+                            break;
                         }
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
                 vesp.PC = 0x0840;
@@ -622,7 +628,8 @@ void kernel (void)
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
                         else 
                         {
-                            cout << "Invalid address. Try again.\n"; break;
+                            cout << "Invalid address. Try again.\n";
+                            break;
                         }
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
                 vesp.PC = 0x0870; //read using vesp
@@ -645,7 +652,8 @@ void kernel (void)
                                 vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
                             else 
                             {
-                                cout << "Invalid address. Try again.\n"; break;
+                                cout << "Invalid address. Try again.\n";
+                                break;
                             }
                     vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017];
                     vesp.PC = 0x0872;
@@ -653,7 +661,8 @@ void kernel (void)
                     //check to stop reading if it is FFFF.
                     if (vesp.MEMORY[0] == 0) 
                     {
-                        for(i = 12245; i<= 12248 && vesp.reset == 0; i++) maincycle(0); break;
+                        for(i = 12245; i<= 12248 && vesp.reset == 0; i++) maincycle(0);
+                        break;
                     }
                     else
                         for(i = 12245; i<= 12248 && vesp.reset == 0; i++) maincycle(0);
@@ -674,7 +683,8 @@ void kernel (void)
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
                         else 
                         {
-                            cout << "Invalid address. Try again.\n"; break;
+                            cout << "Invalid address. Try again.\n";
+                            break;
                         }
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
                 for(i = 12222; i<= 12222 && vesp.reset == 0; i++) maincycle(0); 
@@ -686,7 +696,9 @@ void kernel (void)
                     for(i = 12223; i<= 12226 && vesp.reset == 0; i++) maincycle(0);
                     if (vesp.MEMORY[0] == 0) break;
                     else
-                        cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
+                        cout.fill('0');
+                    cout.width(4);
+                    cout.setf(ios::uppercase);
                     cout << hex << vesp.MEMORY[0x0018] << "\n";
                     for(i = 12227; i<= 12230 && vesp.reset == 0; i++) maincycle(0);
                 }
@@ -717,7 +729,8 @@ int readprogram(void)
     while (action != 0 && action != 1);
     if(action == 1) 
     {
-        cout << "\nEnter the file name: "; cin >> filename;
+        cout << "\nEnter the file name: ";
+        cin >> filename;
         file = fopen(filename,"r");
         if( file != NULL)
         {
@@ -741,7 +754,8 @@ int readprogram(void)
             }
             else
             {
-                cout << "The file is not found. Check if file to be opened is in the program directory... \n"; exit(1);
+                cout << "The file is not found. Check if file to be opened is in the program directory... \n";
+                exit(1);
             }
         }
     }
@@ -770,7 +784,8 @@ int readprogram(void)
     cin >> action;
     if(action == 1) 
     {
-        cout << "\nEnter the file name: "; cin >> filename;
+        cout << "\nEnter the file name: ";
+        cin >> filename;
         cout << hex;
         file = fopen(filename,"w");
         if( file != NULL)
@@ -800,7 +815,8 @@ int readprogram(void)
             }
             else
             {
-                cout << "The file is not found. Check if file to be opened is in the program directory... \n"; exit(1);
+                cout << "The file is not found. Check if file to be opened is in the program directory... \n";
+                exit(1);
             }
         }
     }
@@ -812,31 +828,57 @@ void displayprogram(int progend)
     cout << "\nHere is your program: \n\n";
     for (i = vesp.PC; i<= progend; i++)
     {
-        cout << "Location "; cout.fill('0');  cout.width(4); cout.setf(ios::uppercase);
+        cout << "Location ";
+        cout.fill('0');
+        cout.width(4);
+        cout.setf(ios::uppercase);
         cout <<  hex << i << ": ";  //AYO: display it in uppercase hex. 
-        cout.fill('0');  cout.width(4); cout.setf(ios::uppercase);
+        cout.fill('0');
+        cout.width(4);
+        cout.setf(ios::uppercase);
         cout << hex << (0x0000FFFF & vesp.MEMORY[i]) << "\n";
     }
 }
 void displayregisters(void)
 {
-    cout << "A = ";  cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
+    cout << "A = ";
+    cout.fill('0');
+    cout.width(4);
+    cout.setf(ios::uppercase);
     cout << hex << (0x0000FFFF & vesp.MEMORY[0])<< ", "; 
-    cout << "B = ";  cout.fill('0'); cout.width(4); cout.setf(ios::uppercase); 
+    cout << "B = ";
+    cout.fill('0');
+    cout.width(4);
+    cout.setf(ios::uppercase); 
     cout << hex << (0x0000FFFF & vesp.MEMORY[1])<< ", "; 
-    cout << "IX = ";  cout.fill('0'); cout.width(4); cout.setf(ios::uppercase); 
+    cout << "IX = ";
+    cout.fill('0');
+    cout.width(4);
+    cout.setf(ios::uppercase); 
     cout << hex << (0x0000FFFF & vesp.MEMORY[2])<< ", ";
-    cout << "VAR = "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
+    cout << "VAR = ";
+    cout.fill('0');
+    cout.width(4);
+    cout.setf(ios::uppercase);
     cout << hex << (0x0000FFFF & vesp.MEMORY[3])<< ", ";
     cout << "Z = " <<  vesp.Z << ", ";
     cout << "S = " <<  vesp.S << ", ";
     cout << "C = " <<  vesp.C << ", ";
     cout << "F = " <<  vesp.F << "\n";
-    cout << "MAR = "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
+    cout << "MAR = ";
+    cout.fill('0');
+    cout.width(4);
+    cout.setf(ios::uppercase);
     cout << hex << vesp.MAR << ", "; 
-    cout << "PC = ";  cout.fill('0'); cout.width(8); cout.setf(ios::uppercase);
+    cout << "PC = ";
+    cout.fill('0');
+    cout.width(8);
+    cout.setf(ios::uppercase);
     cout << hex << vesp.PC << ", "; 
-    cout << "IR = "; cout.fill('0');  cout.width(4); cout.setf(ios::uppercase); 
+    cout << "IR = ";
+    cout.fill('0');
+    cout.width(4);
+    cout.setf(ios::uppercase); 
     cout << hex << vesp.IR << ", "; 
     cout << "reset = " << vesp.reset << "\n";
 }
@@ -853,10 +895,16 @@ void displaymemory(void)
     cin.clear();
     for (i = location1; i <= location2; i++)
     {
-        cout <<  "Location "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
+        cout <<  "Location ";
+        cout.fill('0');
+        cout.width(4);
+        cout.setf(ios::uppercase);
         cout << hex << i << " : "; 
-        cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
-        cout << hex << (0x0000FFFF & vesp.MEMORY[i]); cout << "\n"; 
+        cout.fill('0');
+        cout.width(4);
+        cout.setf(ios::uppercase);
+        cout << hex << (0x0000FFFF & vesp.MEMORY[i]);
+        cout << "\n"; 
     }
 }
 void maincycle(int trace)
@@ -864,15 +912,19 @@ void maincycle(int trace)
     if(trace == 1) 
     {
         cout << "Machine Cycle "; 
-        cout.fill('0'); cout.width(8); cout.setf(ios::uppercase);
+        cout.fill('0');
+        cout.width(8);
+        cout.setf(ios::uppercase);
         cout << hex << j << ": ";
     }
     j = j+1;
     //AYO: Fetch Step
     if(trace == 1)
     {
-        cout << "PC = ";  cout.fill('0'); 
-        cout.width(8); cout.setf(ios::uppercase);
+        cout << "PC = ";
+        cout.fill('0'); 
+        cout.width(8);
+        cout.setf(ios::uppercase);
         cout << hex << (vesp.PC & 0x0FFFFFFF) << ", ";     
         cout << "\nFETCH SUBCYCLE\n";
     }
@@ -906,9 +958,13 @@ void maincycle(int trace)
                 (vesp.IR >> 12 ) == 14  || (vesp.IR >> 12 ) == 15 ) 
         {
             cout << "Memory["; 
-            cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
+            cout.fill('0');
+            cout.width(4);
+            cout.setf(ios::uppercase);
             cout << hex << (vesp.MAR) << "] = ";
-            cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
+            cout.fill('0');
+            cout.width(4);
+            cout.setf(ios::uppercase);
             if(vesp.MAR >> 12 == 0) cout << hex << (0x0000FFFF & vesp.MEMORY[vesp.MAR])<< "\n\n";
             else
                 if((vesp.MAR >> 12) >= 1 && (vesp.MAR >> 12) <= 14) cout << hex << (0x0000FFFF & vesp.HDISK[vesp.MAR])<< "\n\n";
@@ -923,13 +979,19 @@ void fetch(int trace)
     //clock cycle 2.  Fetch the next Instruction into IR 
     if(trace == 1)        
     {
-        cout << "MAR = "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
+        cout << "MAR = ";
+        cout.fill('0');
+        cout.width(4);
+        cout.setf(ios::uppercase);
         cout << hex << vesp.MAR << ", ";
     }
     vesp.IR = vesp.MEMORY[vesp.MAR]; vesp.clock = vesp.clock +1; 
     if(trace == 1)         
     {
-        cout << "IR = "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
+        cout << "IR = ";
+        cout.fill('0');
+        cout.width(4);
+        cout.setf(ios::uppercase);
         cout << hex << vesp.IR << ", ";
     }
 }
@@ -944,81 +1006,112 @@ void decode(int trace)
                 switch(vesp.IR >> 8 & 0x000F)
                 {
                     case 0x0:
-                        cout << "ADA\n"; break; // A  = A + B
+                        cout << "ADA\n";
+                        break; // A  = A + B
                     case 0x1:
-                        cout << "ADB\n"; break; // B  = A + B
+                        cout << "ADB\n";
+                        break; // B  = A + B
                     case 0x2:
-                        cout << "ADX\n"; break; // IX = IX + B
+                        cout << "ADX\n";
+                        break; // IX = IX + B
                     case 0x3:
-                        cout << "SUB\n"; break; // A  = A - B
+                        cout << "SUB\n";
+                        break; // A  = A - B
                     case 0x4:
-                        cout << "SUA\n"; break; // B  = B - A		
+                        cout << "SUA\n";
+                        break; // B  = B - A		
                     case 0x5:
-                        cout << "SBX\n"; break; // IX = IX - B
+                        cout << "SBX\n";
+                        break; // IX = IX - B
                     case 0x6:
-                        cout << "CLA\n"; break; // A  = 0
+                        cout << "CLA\n";
+                        break; // A  = 0
                     case 0x7:
-                        cout << "CLB\n"; break; // B  = 0
+                        cout << "CLB\n";
+                        break; // B  = 0
                     case 0x8:
-                        cout << "CLX\n"; break; // IX = 0
+                        cout << "CLX\n";
+                        break; // IX = 0
                     case 0x9:
-                        cout << "CLV\n"; break; // VAR = 0
+                        cout << "CLV\n";
+                        break; // VAR = 0
                 }
                 break; 
             case  0x1:
-                cout <<  "CMP\n"; break;          
+                cout <<  "CMP\n";
+                break;          
                 //Load                             //Move
-            case  0x2: cout << "LDA\n"; break; case  0x3:
-                       cout <<  "MOV\n"; break;
+            case  0x2: cout << "LDA\n";
+                       break; case  0x3:
+                           cout <<  "MOV\n";
+                       break;
                        //Jump                            //Jump if A = 0
-            case  0x4: cout << "JMP\n"; break; case  0x5:
-                       cout <<  "JEZ\n"; break;
+            case  0x4: cout << "JMP\n";
+                       break; case  0x5:
+                           cout <<  "JEZ\n";
+                       break;
                        //Jump if A > 0                   
             case  0x6:
-                       cout << "JPS\n"; break; 
+                       cout << "JPS\n";
+                       break; 
             case  0x7:
                        switch(vesp.IR >> 8 & 0x000F)
                        {
                            case 0x0:
-                               cout <<  "HLT\n"; break; //Halt
+                               cout <<  "HLT\n";
+                               break; //Halt
                            case 0x1:
-                               cout <<  "JAZ\n"; break; //Jump if A = 0
+                               cout <<  "JAZ\n";
+                               break; //Jump if A = 0
                            case 0x2:
-                               cout <<  "JAP\n"; break; //Jump if A > 0
+                               cout <<  "JAP\n";
+                               break; //Jump if A > 0
                            case 0x3:
-                               cout <<  "JAN\n"; break; //Jump if A < 0
+                               cout <<  "JAN\n";
+                               break; //Jump if A < 0
                            case 0x4:
-                               cout <<  "JPZ\n"; break; //Jump if A >= 0
+                               cout <<  "JPZ\n";
+                               break; //Jump if A >= 0
                            case 0x5:
-                               cout <<  "JMZ\n"; break; //Jump if A <= 0
+                               cout <<  "JMZ\n";
+                               break; //Jump if A <= 0
                            case 0x6:
-                               cout <<  "JNZ\n"; break; //Jump if A <= 0
+                               cout <<  "JNZ\n";
+                               break; //Jump if A <= 0
                            case 0x7:
-                               cout <<  "NOP\n"; break; //No operation
+                               cout <<  "NOP\n";
+                               break; //No operation
                            case 0x8:
-                               cout <<  "JMB\n"; break; //Jump via B
+                               cout <<  "JMB\n";
+                               break; //Jump via B
                        }
                        break;
             case  0x8:
                        switch(vesp.IR >> 8 & 0x000F)
                        {
                            case 0:
-                               cout <<  "INA\n"; break; //Increment A
+                               cout <<  "INA\n";
+                               break; //Increment A
                            case 1:
-                               cout <<  "INB\n"; break; //Increment B
+                               cout <<  "INB\n";
+                               break; //Increment B
                            case 2:
-                               cout <<  "INX\n"; break; //Increment IX
+                               cout <<  "INX\n";
+                               break; //Increment IX
                        }
                        break;		  
             case  0x9:
                        switch(vesp.IR >> 8 & 0x000F)
                        {
                            case 0x0:
-                               cout <<  "DEA\n"; break; //Decrement A
+                               cout <<  "DEA\n";
+                               break; //Decrement A
                            case 0x1:
-                               cout <<  "DEB\n"; break; //Decrement B
+                               cout <<  "DEB\n";
+                               break; //Decrement B
                            case 0x2:
-                               cout <<  "DEX\n"; break; //Decrement IX
+                               cout <<  "DEX\n";
+                               break; //Decrement IX
                        }
                        break;
                        //AND                           
@@ -1026,9 +1119,11 @@ void decode(int trace)
                        switch(vesp.IR >> 8 & 0x000F)
                        {
                            case 0x0:
-                               cout <<  "ANA\n"; break; //A = A && B
+                               cout <<  "ANA\n";
+                               break; //A = A && B
                            case 0x1:
-                               cout <<  "ANB\n"; break; //B = A && B
+                               cout <<  "ANB\n";
+                               break; //B = A && B
                        }
                        break;
                        //IOR                            
@@ -1036,9 +1131,11 @@ void decode(int trace)
                        switch(vesp.IR >> 8 & 0x000F)
                        {
                            case 0x0:
-                               cout <<  "IOA\n"; break; //A = A || B
+                               cout <<  "IOA\n";
+                               break; //A = A || B
                            case 0x1:
-                               cout <<  "IOB\n"; break; //B = A || B
+                               cout <<  "IOB\n";
+                               break; //B = A || B
                        }
                        break;
                        //Shift left                      
@@ -1046,9 +1143,11 @@ void decode(int trace)
                        switch(vesp.IR >> 8 & 0x000F)
                        {
                            case 0x0:
-                               cout <<  "SLA\n"; break; //A = A << 1
+                               cout <<  "SLA\n";
+                               break; //A = A << 1
                            case 0x1:
-                               cout <<  "SLB\n"; break; //B = B << 1
+                               cout <<  "SLB\n";
+                               break; //B = B << 1
                        }
                        break;
                        //Shift right                      
@@ -1056,14 +1155,18 @@ void decode(int trace)
                        switch(vesp.IR >> 8 & 0x000F)
                        {
                            case 0x0:
-                               cout <<  "SLA\n"; break; //A = A >> 1
+                               cout <<  "SLA\n";
+                               break; //A = A >> 1
                            case 0x1:
-                               cout <<  "SLB\n"; break; //B = B >> 1
+                               cout <<  "SLB\n";
+                               break; //B = B >> 1
                        }
                        break;
                        //Move from with index                    //Move to with index
-            case  0xE: cout << "MXF\n"; break; case 0xF:
-                       cout << "MXT\n"; break;
+            case  0xE: cout << "MXF\n";
+                       break; case 0xF:
+                           cout << "MXT\n";
+                       break;
         }
     }
 }
@@ -1166,7 +1269,8 @@ void execute(void)
             vesp.clock = vesp.clock +1;  
             if(A  == 0)  vesp.Z = 1; else vesp.Z = 0; 
             vesp.S = (A & 0x8000 ) >> 15;  
-            vesp.cmp = 1; break;
+            vesp.cmp = 1;
+            break;
             //Load         
         case  0x2:
             vesp.MAR += 1;
@@ -1193,7 +1297,8 @@ void execute(void)
             //AYO: Set Sign Flag  
             if(vesp.MAR == 0)
                 vesp.S = (A & 0x8000 ) >> 15;                           
-            vesp.PC = vesp.PC + 1; break;  
+            vesp.PC = vesp.PC + 1;
+            break;  
             //Move
         case 0x3:
             vesp.MAR += 1;
@@ -1231,11 +1336,13 @@ void execute(void)
             //AYO: Set Sign Flag  
             if(vesp.MAR == 0)
                 vesp.S = (A & 0x8000 ) >> 15;        
-            vesp.PC = vesp.PC + 1; break;
+            vesp.PC = vesp.PC + 1;
+            break;
             //Jump
         case 0x4:
             vesp.PC = vesp.IR & 0x1FFF; vesp.jmp = 1;
-            vesp.clock = vesp.clock +1; break;  
+            vesp.clock = vesp.clock +1;
+            break;  
             //Jump if A is  0
         case 0x5:
             if (A == 0) 
@@ -1243,7 +1350,8 @@ void execute(void)
                 vesp.PC = vesp.IR & 0x0FFF;
             }
             vesp.jez = 1;
-            vesp.clock = vesp.clock +1; break;  
+            vesp.clock = vesp.clock +1;
+            break;  
             //Jump if A is > 0
         case 0x6:
             if (A > 0) 
@@ -1251,60 +1359,70 @@ void execute(void)
                 vesp.PC = vesp.IR & 0x0FFF;
             }
             vesp.jps = 1;
-            vesp.clock = vesp.clock +1; break;  
+            vesp.clock = vesp.clock +1;
+            break;  
             //Halt and extended branch
         case 0x7:
             switch(vesp.IR >> 8 & 0x000F)
             {
                 case 0x0:
-                    vesp.reset = true;  vesp.clock = vesp.clock +1; break; //HLT
+                    vesp.reset = true;  vesp.clock = vesp.clock +1;
+                    break; //HLT
                 case 0x1:
                     if (A == 0) 
                     {
                         vesp.PC = B;
                     }
                     vesp.jap = 1;
-                    vesp.clock = vesp.clock +1; break;  //Jump if A > 0
+                    vesp.clock = vesp.clock +1;
+                    break;  //Jump if A > 0
                 case 0x2:
                     if (A > 0) 
                     {
                         vesp.PC = B;
                     }
                     vesp.jaz = 1;
-                    vesp.clock = vesp.clock +1; break;  //Jump if A = 0
+                    vesp.clock = vesp.clock +1;
+                    break;  //Jump if A = 0
                 case 0x3:
                     if (A < 0) 
                     {
                         vesp.PC = B;
                     }
                     vesp.jng = 1;
-                    vesp.clock = vesp.clock +1; break;  //Jump if A < 0
+                    vesp.clock = vesp.clock +1;
+                    break;  //Jump if A < 0
                 case 0x4:
                     if (A >= 0) 
                     {
                         vesp.PC = B;
                     }
                     vesp.jpz = 1;
-                    vesp.clock = vesp.clock +1; break;  //Jump if A >= 0
+                    vesp.clock = vesp.clock +1;
+                    break;  //Jump if A >= 0
                 case 0x5:
                     if (A <= 0) 
                     {
                         vesp.PC = B;
                     }
                     vesp.jnz = 1;
-                    vesp.clock = vesp.clock +1; break;  //Jump if A <= 0
+                    vesp.clock = vesp.clock +1;
+                    break;  //Jump if A <= 0
                 case 0x6:
                     if (A != 0) 
                     {
                         vesp.PC = B;
                     }
                     vesp.jnz = 1;
-                    vesp.clock = vesp.clock +1; break;  //Jump if A <= 0
+                    vesp.clock = vesp.clock +1;
+                    break;  //Jump if A <= 0
                 case 0x7:
-                    vesp.clock = vesp.clock +1; vesp.nop = 1; break;  //NOP
+                    vesp.clock = vesp.clock +1; vesp.nop = 1;
+                    break;  //NOP
                 case 0x8:
                     vesp.PC = B; vesp.jmb = 1;
-                    vesp.clock = vesp.clock +1; break;  //Jump via register B
+                    vesp.clock = vesp.clock +1;
+                    break;  //Jump via register B
             }
             break;
         case  0x8:
@@ -1322,7 +1440,8 @@ void execute(void)
                     //AYO: Set Zero Flag
                     if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
                     //AYO: Set Sign Flag          
-                    vesp.S = (A & 0x8000 ) >> 15;  vesp.ina = 1; break;
+                    vesp.S = (A & 0x8000 ) >> 15;  vesp.ina = 1;
+                    break;
                     //AYO: In this implementation, vesp.inc is just symbolically set to 1.
                     //In a bus implementation, the input bus must be loaded with 1 and the 
                     //vesp's computation engine must be programmed to add its operands.
@@ -1337,7 +1456,8 @@ void execute(void)
                     //AYO: Set Zero Flag
                     if(B  == 0) vesp.Z = 1; else vesp.Z = 0; 
                     //AYO: Set Sign Flag          
-                    vesp.S = (B & 0x8000 ) >> 15;  vesp.inb = 1; break;
+                    vesp.S = (B & 0x8000 ) >> 15;  vesp.inb = 1;
+                    break;
                     //AYO: In this implementation, vesp.inc is just symbolically set to 1.
                     //In a bus implementation, the input bus must be loaded with 1 and the 
                     //vesp's computation engine must be programmed to add its operands.
@@ -1352,7 +1472,8 @@ void execute(void)
                     //AYO: Set Zero Flag
                     if(IX  == 0) vesp.Z = 1; else vesp.Z = 0; 
                     //AYO: Set Sign Flag          
-                    vesp.S = (IX & 0x8000 ) >> 15;  vesp.inx = 1; break;
+                    vesp.S = (IX & 0x8000 ) >> 15;  vesp.inx = 1;
+                    break;
                     //AYO: In this implementation, vesp.inc is just symbolically set to 1.
                     //In a bus implementation, the input bus must be loaded with 1 and the 
                     //vesp's computation engine must be programmed to add its operands.
@@ -1373,7 +1494,8 @@ void execute(void)
                     //AYO: Set Zero Flag
                     if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
                     //AYO: Set Sign Flag          
-                    vesp.S = (A & 0x8000 ) >> 15;  vesp.dea = 1; break;		   
+                    vesp.S = (A & 0x8000 ) >> 15;  vesp.dea = 1;
+                    break;		   
                     //AYO: In this implementation, vesp.dec is just symbolically set to 1.
                     //In a bus implementation, the input bus must be loaded with 1 and complemented;
                     // carry-in must be set to vesp.dec, and the vesp's computation engine  
@@ -1389,7 +1511,8 @@ void execute(void)
                     //AYO: Set Zero Flag
                     if(B  == 0) vesp.Z = 1; else vesp.Z = 0; 
                     //AYO: Set Sign Flag          
-                    vesp.S = (B & 0x8000 ) >> 15;  vesp.deb = 1; break;
+                    vesp.S = (B & 0x8000 ) >> 15;  vesp.deb = 1;
+                    break;
                     //AYO: In this implementation, vesp.dec is just symbolically set to 1.
                     //In a bus implementation, the input bus must be loaded with 1 and complemented;
                     // carry-in must be set to vesp.dec, and the vesp's computation engine  
@@ -1405,7 +1528,8 @@ void execute(void)
                     //AYO: Set Zero Flag
                     if(IX  == 0) vesp.Z = 1; else vesp.Z = 0; 
                     //AYO: Set Sign Flag          
-                    vesp.S = (IX & 0x8000 ) >> 15;  vesp.dex = 1; break;
+                    vesp.S = (IX & 0x8000 ) >> 15;  vesp.dex = 1;
+                    break;
                     //AYO: In this implementation, vesp.dec is just symbolically set to 1.
                     //In a bus implementation, the input bus must be loaded with 1 and complemented;
                     // carry-in must be set to vesp.dec, and the vesp's computation engine  
@@ -1421,13 +1545,15 @@ void execute(void)
                     temp = A & B; vesp.clock = vesp.clock +1;                                        
                     A  = temp;   vesp.MEMORY[0] = A;  //Save the sum in MEMORY[0]
                     //AYO: Set Zero Flag
-                    if(A  == 0) vesp.Z = 1; else vesp.Z = 0; vesp.ana = 1; break;
+                    if(A  == 0) vesp.Z = 1; else vesp.Z = 0; vesp.ana = 1;
+                    break;
                 case 0x1:
                     //B = A && B
                     temp = A & B; vesp.clock = vesp.clock +1;                                        
                     B  = temp;   vesp.MEMORY[1] = B;  //Save the sum in MEMORY[1]
                     //AYO: Set Zero Flag
-                    if(B  == 0) vesp.Z = 1; else vesp.Z = 0; vesp.anb = 1;  break;
+                    if(B  == 0) vesp.Z = 1; else vesp.Z = 0; vesp.anb = 1;
+                    break;
             }
             break;
             //Or
@@ -1439,13 +1565,15 @@ void execute(void)
                     temp = A | B; vesp.clock = vesp.clock +1;                                        
                     A  = temp;   vesp.MEMORY[0] = A;  //Save the sum in MEMORY[0]
                     //AYO: Set Zero Flag
-                    if(A  == 0) vesp.Z = 1; else vesp.Z = 0;  vesp.ioa = 1; break;
+                    if(A  == 0) vesp.Z = 1; else vesp.Z = 0;  vesp.ioa = 1;
+                    break;
                 case 0x1:
                     //B = A || B
                     temp = A | B; vesp.clock = vesp.clock +1;                                        
                     B = temp;   vesp.MEMORY[1] = B;  //Save the sum in MEMORY[1]
                     //AYO: Set Zero Flag
-                    if(B  == 0) vesp.Z = 1; else vesp.Z = 0;  vesp.iob = 1; break;
+                    if(B  == 0) vesp.Z = 1; else vesp.Z = 0;  vesp.iob = 1;
+                    break;
             }
             break;
             //shift left
@@ -1459,7 +1587,8 @@ void execute(void)
                     //AYO: Set Zero Flag
                     if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
                     //AYO: Set Sign Flag          
-                    vesp.S = (A & 0x8000 ) >> 15;  vesp.sla = 1; break;
+                    vesp.S = (A & 0x8000 ) >> 15;  vesp.sla = 1;
+                    break;
                 case 0x1:
                     //B = B << 1
                     temp = B << 1; vesp.clock = vesp.clock +1;                                        
@@ -1467,7 +1596,8 @@ void execute(void)
                     //AYO: Set Zero Flag
                     if(B  == 0) vesp.Z = 1; else vesp.Z = 0; 
                     //AYO: Set Sign Flag          
-                    vesp.S = (B & 0x8000 ) >> 15;  vesp.slb = 1; break;
+                    vesp.S = (B & 0x8000 ) >> 15;  vesp.slb = 1;
+                    break;
             }
             break;
             //Shift right
@@ -1481,7 +1611,8 @@ void execute(void)
                     //AYO: Set Zero Flag
                     if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
                     //AYO: Set Sign Flag          
-                    vesp.S = (A & 0x8000 ) >> 15;  vesp.sra = 1; break;
+                    vesp.S = (A & 0x8000 ) >> 15;  vesp.sra = 1;
+                    break;
                 case 0x1:
                     //B = B >> 1
                     temp = B >> 1; vesp.clock = vesp.clock +1;                                        
@@ -1489,7 +1620,8 @@ void execute(void)
                     //AYO: Set Zero Flag
                     if(B  == 0) vesp.Z = 1; else vesp.Z = 0; 
                     //AYO: Set Sign Flag          
-                    vesp.S = (B & 0x8000 ) >> 15;  vesp.srb = 1; break;
+                    vesp.S = (B & 0x8000 ) >> 15;  vesp.srb = 1;
+                    break;
             }
             break;
             //MXF (index is used to copy a list of operands into a location one at a time.)
@@ -1540,7 +1672,8 @@ void execute(void)
             //AYO: Set Zero Flag
             if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
             //AYO: Set Sign Flag          
-            vesp.S = (A & 0x8000 ) >> 15;  vesp.mxf = 1; break;
+            vesp.S = (A & 0x8000 ) >> 15;  vesp.mxf = 1;
+            break;
             //MXT (index register is used to copy an operand to a set of locations one at a time.)
         case  15:
             if((IX >> 12)  == 0) //destination is in vesp.MEMORY (and IX always holds a 16-bit address.)
@@ -1591,7 +1724,8 @@ void execute(void)
             //AYO: Set Zero Flag
             if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
             //AYO: Set Sign Flag          
-            vesp.S = (A & 0x8000 ) >> 15;  vesp.mxt = 1; break;        
+            vesp.S = (A & 0x8000 ) >> 15;  vesp.mxt = 1;
+            break;        
     }
 }
 //Sample runs

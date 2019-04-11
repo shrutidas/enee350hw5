@@ -554,140 +554,22 @@ void kernel (void)
         getchar();
 
         switch(vesp.MEMORY[0x0010]) // This could be done in vesp as well- but doing it in C simplifies things.
-        { case 'l':
-            vesp.PC = 0x781; for(i = 12214; i<= 12223 && vesp.reset == 0; i++) maincycle(0); //Display "d-address:"
-            updatescreen(4,10); //display the frame buffer
-            vesp.MEMORY[0x0010] = getchar(); vesp.MEMORY[0x0011] = getchar(); 
-            vesp.MEMORY[0x0012] = getchar(); vesp.MEMORY[0x0013] = getchar();
-            getchar();
+        { 
+            case 'l':
+                vesp.PC = 0x781; for(i = 12214; i<= 12223 && vesp.reset == 0; i++) maincycle(0); //Display "d-address:"
+                updatescreen(4,10); //display the frame buffer
+                vesp.MEMORY[0x0010] = getchar(); vesp.MEMORY[0x0011] = getchar(); 
+                vesp.MEMORY[0x0012] = getchar(); vesp.MEMORY[0x0013] = getchar();
+                getchar();
 
-            vesp.PC = 0x795; for(i = 12224; i<= 12233 && vesp.reset == 0; i++) maincycle(0); //Display "m-address"
-            updatescreen(5,10); //display the frame buffer
-            vesp.MEMORY[0x0014] = getchar(); vesp.MEMORY[0x0015] = getchar(); 
-            vesp.MEMORY[0x0016] = getchar(); vesp.MEMORY[0x0017] = getchar();
-            getchar();
-
-            //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
-            for(i=0x0010;i<= 0x0017;i++)
-                if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
-                    vesp.MEMORY[i] = vesp.MEMORY[i] - '0';
-                else
-                    if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
-                        vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                    else {cout << "Invalid address. Try again.\n"; break;}
-
-            vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013]; //Disk address
-            vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017]; //RAM address
-
-            vesp.PC = 0x800; //load using vesp.
-            for(i = 12234; i<= 12234 && vesp.reset == 0; i++) maincycle(0); //initialize IX
-
-            while(programSize++ <= 256)
-            {for(i = 12235; i<= 12238 && vesp.reset == 0; i++) maincycle(0);
-                if (vesp.MEMORY[0] == 0) 
-                {for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;}
-                else
-                    for(i = 12239; i<= 12246 && vesp.reset == 0; i++) maincycle(0);
-            }
-
-            break;
-
-            case 's': 
-            vesp.PC = 0x795; for(i = 12214; i<= 12223 && vesp.reset == 0; i++) maincycle(0); 
-            updatescreen(5,10); //display the frame buffer
-            vesp.MEMORY[0x0010] = getchar(); vesp.MEMORY[0x0011] = getchar(); 
-            vesp.MEMORY[0x0012] = getchar(); vesp.MEMORY[0x0013] = getchar();
-            getchar();
-
-            vesp.PC = 0x781; for(i = 12224; i<= 12233 && vesp.reset == 0; i++) maincycle(0); 
-            updatescreen(4,10); //display the frame buffer
-            vesp.MEMORY[0x0014] = getchar(); vesp.MEMORY[0x0015] = getchar(); 
-            vesp.MEMORY[0x0016] = getchar(); vesp.MEMORY[0x0017] = getchar();
-            getchar();
-
-            //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
-            for(i=0x0010;i<= 0x0017;i++)
-                if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
-                    vesp.MEMORY[i] = vesp.MEMORY[i] - '0';
-                else
-                    if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
-                        vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                    else {cout << "Invalid address. Try again.\n"; break;}
-
-            vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013]; //RAM address
-            vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017]; //Disk address
-
-            vesp.PC = 0x820; //save using vesp.
-            for(i = 12234; i<= 12234 && vesp.reset == 0; i++) maincycle(0); //initialize IX
-
-            while(programSize++ <= 256)
-            {for(i = 12235; i<= 12238 && vesp.reset == 0; i++) maincycle(0);
-                if (vesp.MEMORY[0] == 0) //Check if the end of save is reached
-                {for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;}
-                else
-                    for(i = 12239; i<= 12246 && vesp.reset == 0; i++) maincycle(0);
-            }
-
-            break;
-
-
-            case 'e': 
-            vesp.PC = 0x795; for(i = 12214; i<= 12223 && vesp.reset == 0; i++) maincycle(0); 
-            updatescreen(5,10); //display the frame buffer
-            vesp.MEMORY[0x0010] = getchar(); vesp.MEMORY[0x0011] = getchar(); 
-            vesp.MEMORY[0x0012] = getchar(); vesp.MEMORY[0x0013] = getchar();
-            getchar();
-
-            //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
-            for(i=0x0010;i<= 0x0013;i++)
-                if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
-                    vesp.MEMORY[i] = vesp.MEMORY[i] - '0';
-                else
-                    if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
-                        vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                    else {cout << "Invalid address. Try again.\n"; break;}
-
-            vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
-
-            vesp.PC = 0x0840;
-            for(i = 12224; i<= 12225 && vesp.reset == 0; i++) maincycle(0); //jump to the location specified by the user (see the execute  vesp code above)
-            while(vesp.reset == 0) maincycle(1); //execute the code
-            vesp.reset = 0; //To allow for multiple executions. 4/18/2009
-            break; 
-
-            case 'r':
-            vesp.PC = 0x0795; for(i = 12214; i<= 12223 && vesp.reset == 0; i++) maincycle(0); 
-            updatescreen(5,10); //display the frame buffer
-            vesp.MEMORY[0x0010] = getchar(); vesp.MEMORY[0x0011] = getchar(); //get the memory address to buffer the console
-            vesp.MEMORY[0x0012] = getchar(); vesp.MEMORY[0x0013] = getchar();
-            getchar();
-
-            //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
-            for(i=0x0010;i<= 0x0013;i++)
-                if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
-                    vesp.MEMORY[i] = vesp.MEMORY[i] - '0';
-                else
-                    if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
-                        vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                    else {cout << "Invalid address. Try again.\n"; break;}
-
-            vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
-
-            vesp.PC = 0x0870; //read using vesp
-            for(i = 12224; i<= 12224 && vesp.reset == 0; i++) maincycle(0); //Initialize IX.
-
-            while(programSize++ <= 256)
-            {vesp.PC = 0x0850;
-                for(i = 12225; i<= 12240 && vesp.reset == 0; i++) maincycle(0); 
-                updatescreen(6,16); //display the frame buffer (enter next code:)
-
-                //read in the next insruction
+                vesp.PC = 0x795; for(i = 12224; i<= 12233 && vesp.reset == 0; i++) maincycle(0); //Display "m-address"
+                updatescreen(5,10); //display the frame buffer
                 vesp.MEMORY[0x0014] = getchar(); vesp.MEMORY[0x0015] = getchar(); 
                 vesp.MEMORY[0x0016] = getchar(); vesp.MEMORY[0x0017] = getchar();
                 getchar();
 
                 //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
-                for(i=0x0014;i<= 0x0017;i++)
+                for(i=0x0010;i<= 0x0017;i++)
                     if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
                         vesp.MEMORY[i] = vesp.MEMORY[i] - '0';
                     else
@@ -695,50 +577,169 @@ void kernel (void)
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
                         else {cout << "Invalid address. Try again.\n"; break;}
 
-                vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017];
+                vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013]; //Disk address
+                vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017]; //RAM address
 
-                vesp.PC = 0x0872;
-                for(i = 12241; i<= 12244 && vesp.reset == 0; i++) maincycle(0);
-                //check to stop reading if it is FFFF.
-                if (vesp.MEMORY[0] == 0) {for(i = 12245; i<= 12248 && vesp.reset == 0; i++) maincycle(0); break;}
-                else
-                    for(i = 12245; i<= 12248 && vesp.reset == 0; i++) maincycle(0);
-            }
+                vesp.PC = 0x800; //load using vesp.
+                for(i = 12234; i<= 12234 && vesp.reset == 0; i++) maincycle(0); //initialize IX
 
-            break;
+                while(programSize++ <= 256)
+                {for(i = 12235; i<= 12238 && vesp.reset == 0; i++) maincycle(0);
+                    if (vesp.MEMORY[0] == 0) 
+                    {for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;}
+                    else
+                        for(i = 12239; i<= 12246 && vesp.reset == 0; i++) maincycle(0);
+                }
+
+                break;
+
+            case 's': 
+                vesp.PC = 0x795; for(i = 12214; i<= 12223 && vesp.reset == 0; i++) maincycle(0); 
+                updatescreen(5,10); //display the frame buffer
+                vesp.MEMORY[0x0010] = getchar(); vesp.MEMORY[0x0011] = getchar(); 
+                vesp.MEMORY[0x0012] = getchar(); vesp.MEMORY[0x0013] = getchar();
+                getchar();
+
+                vesp.PC = 0x781; for(i = 12224; i<= 12233 && vesp.reset == 0; i++) maincycle(0); 
+                updatescreen(4,10); //display the frame buffer
+                vesp.MEMORY[0x0014] = getchar(); vesp.MEMORY[0x0015] = getchar(); 
+                vesp.MEMORY[0x0016] = getchar(); vesp.MEMORY[0x0017] = getchar();
+                getchar();
+
+                //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
+                for(i=0x0010;i<= 0x0017;i++)
+                    if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
+                        vesp.MEMORY[i] = vesp.MEMORY[i] - '0';
+                    else
+                        if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
+                            vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
+                        else {cout << "Invalid address. Try again.\n"; break;}
+
+                vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013]; //RAM address
+                vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017]; //Disk address
+
+                vesp.PC = 0x820; //save using vesp.
+                for(i = 12234; i<= 12234 && vesp.reset == 0; i++) maincycle(0); //initialize IX
+
+                while(programSize++ <= 256)
+                {for(i = 12235; i<= 12238 && vesp.reset == 0; i++) maincycle(0);
+                    if (vesp.MEMORY[0] == 0) //Check if the end of save is reached
+                    {for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;}
+                    else
+                        for(i = 12239; i<= 12246 && vesp.reset == 0; i++) maincycle(0);
+                }
+
+                break;
+
+
+            case 'e': 
+                vesp.PC = 0x795; for(i = 12214; i<= 12223 && vesp.reset == 0; i++) maincycle(0); 
+                updatescreen(5,10); //display the frame buffer
+                vesp.MEMORY[0x0010] = getchar(); vesp.MEMORY[0x0011] = getchar(); 
+                vesp.MEMORY[0x0012] = getchar(); vesp.MEMORY[0x0013] = getchar();
+                getchar();
+
+                //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
+                for(i=0x0010;i<= 0x0013;i++)
+                    if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
+                        vesp.MEMORY[i] = vesp.MEMORY[i] - '0';
+                    else
+                        if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
+                            vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
+                        else {cout << "Invalid address. Try again.\n"; break;}
+
+                vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
+
+                vesp.PC = 0x0840;
+                for(i = 12224; i<= 12225 && vesp.reset == 0; i++) maincycle(0); //jump to the location specified by the user (see the execute  vesp code above)
+                while(vesp.reset == 0) maincycle(1); //execute the code
+                vesp.reset = 0; //To allow for multiple executions. 4/18/2009
+                break; 
+
+            case 'r':
+                vesp.PC = 0x0795; for(i = 12214; i<= 12223 && vesp.reset == 0; i++) maincycle(0); 
+                updatescreen(5,10); //display the frame buffer
+                vesp.MEMORY[0x0010] = getchar(); vesp.MEMORY[0x0011] = getchar(); //get the memory address to buffer the console
+                vesp.MEMORY[0x0012] = getchar(); vesp.MEMORY[0x0013] = getchar();
+                getchar();
+
+                //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
+                for(i=0x0010;i<= 0x0013;i++)
+                    if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
+                        vesp.MEMORY[i] = vesp.MEMORY[i] - '0';
+                    else
+                        if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
+                            vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
+                        else {cout << "Invalid address. Try again.\n"; break;}
+
+                vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
+
+                vesp.PC = 0x0870; //read using vesp
+                for(i = 12224; i<= 12224 && vesp.reset == 0; i++) maincycle(0); //Initialize IX.
+
+                while(programSize++ <= 256)
+                {vesp.PC = 0x0850;
+                    for(i = 12225; i<= 12240 && vesp.reset == 0; i++) maincycle(0); 
+                    updatescreen(6,16); //display the frame buffer (enter next code:)
+
+                    //read in the next insruction
+                    vesp.MEMORY[0x0014] = getchar(); vesp.MEMORY[0x0015] = getchar(); 
+                    vesp.MEMORY[0x0016] = getchar(); vesp.MEMORY[0x0017] = getchar();
+                    getchar();
+
+                    //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
+                    for(i=0x0014;i<= 0x0017;i++)
+                        if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
+                            vesp.MEMORY[i] = vesp.MEMORY[i] - '0';
+                        else
+                            if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
+                                vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
+                            else {cout << "Invalid address. Try again.\n"; break;}
+
+                    vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017];
+
+                    vesp.PC = 0x0872;
+                    for(i = 12241; i<= 12244 && vesp.reset == 0; i++) maincycle(0);
+                    //check to stop reading if it is FFFF.
+                    if (vesp.MEMORY[0] == 0) {for(i = 12245; i<= 12248 && vesp.reset == 0; i++) maincycle(0); break;}
+                    else
+                        for(i = 12245; i<= 12248 && vesp.reset == 0; i++) maincycle(0);
+                }
+
+                break;
 
             case 'w': 
-            vesp.PC = 0x0890; for(i = 12214; i<= 12221 && vesp.reset == 0; i++) maincycle(0); 
-            updatescreen(6,7); //display the frame buffer
-            vesp.MEMORY[0x0010] = getchar(); vesp.MEMORY[0x0011] = getchar(); 
-            vesp.MEMORY[0x0012] = getchar(); vesp.MEMORY[0x0013] = getchar();
-            getchar();
+                vesp.PC = 0x0890; for(i = 12214; i<= 12221 && vesp.reset == 0; i++) maincycle(0); 
+                updatescreen(6,7); //display the frame buffer
+                vesp.MEMORY[0x0010] = getchar(); vesp.MEMORY[0x0011] = getchar(); 
+                vesp.MEMORY[0x0012] = getchar(); vesp.MEMORY[0x0013] = getchar();
+                getchar();
 
-            //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
-            for(i=0x0010;i<= 0x0013;i++)
-                if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
-                    vesp.MEMORY[i] = vesp.MEMORY[i] - '0';
-                else
-                    if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
-                        vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
-                    else {cout << "Invalid address. Try again.\n"; break;}
+                //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
+                for(i=0x0010;i<= 0x0013;i++)
+                    if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
+                        vesp.MEMORY[i] = vesp.MEMORY[i] - '0';
+                    else
+                        if(vesp.MEMORY[i] >= 'A' && vesp.MEMORY[i] <= 'F')
+                            vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
+                        else {cout << "Invalid address. Try again.\n"; break;}
 
-            vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
+                vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
 
-            for(i = 12222; i<= 12222 && vesp.reset == 0; i++) maincycle(0); 
-            //write using vesp.
+                for(i = 12222; i<= 12222 && vesp.reset == 0; i++) maincycle(0); 
+                //write using vesp.
 
-            while(programSize++ <= 256)
-            {//vesp.PC = 0x08A2;
-                //check to stop writing if it is FFFF.
-                for(i = 12223; i<= 12226 && vesp.reset == 0; i++) maincycle(0);
-                if (vesp.MEMORY[0] == 0) break;
-                else
-                    cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
-                cout << hex << vesp.MEMORY[0x0018] << "\n";
-                for(i = 12227; i<= 12230 && vesp.reset == 0; i++) maincycle(0);
-            }
-            break;
+                while(programSize++ <= 256)
+                {//vesp.PC = 0x08A2;
+                    //check to stop writing if it is FFFF.
+                    for(i = 12223; i<= 12226 && vesp.reset == 0; i++) maincycle(0);
+                    if (vesp.MEMORY[0] == 0) break;
+                    else
+                        cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
+                    cout << hex << vesp.MEMORY[0x0018] << "\n";
+                    for(i = 12227; i<= 12230 && vesp.reset == 0; i++) maincycle(0);
+                }
+                break;
 
         }
 

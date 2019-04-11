@@ -1042,13 +1042,15 @@ void decode(int trace)
                 break;          
                 //Load                             //Move
             case  0x2: cout << "LDA\n";
-                       break; case  0x3:
-                           cout <<  "MOV\n";
+                       break; 
+            case  0x3:
+                       cout <<  "MOV\n";
                        break;
                        //Jump                            //Jump if A = 0
             case  0x4: cout << "JMP\n";
-                       break; case  0x5:
-                           cout <<  "JEZ\n";
+                       break; 
+            case  0x5:
+                       cout <<  "JEZ\n";
                        break;
                        //Jump if A > 0                   
             case  0x6:
@@ -1164,8 +1166,9 @@ void decode(int trace)
                        break;
                        //Move from with index                    //Move to with index
             case  0xE: cout << "MXF\n";
-                       break; case 0xF:
-                           cout << "MXT\n";
+                       break; 
+            case 0xF:
+                       cout << "MXT\n";
                        break;
         }
     }

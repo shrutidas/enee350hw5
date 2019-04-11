@@ -1,3 +1,4 @@
+//execute the kernel once the kernel-code is allowed to run...
 
 0x23C0;  0x0065;//write e; 0x0700-701-line 380 to 3BF(blank) 3C0-3FF (enter:)
 0x23C1;  0x006E;//write n; 0x0702-703

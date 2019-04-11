@@ -1,3 +1,15 @@
+//vesp's boot code begins at location 0x0020.
+// When vesp starts, it first loads the boot code from vesp.Bootsrap into vesp.MEMORY[0x0020-..]
+//It then carries out the following steps:
+//1- Clear the screen
+//2- Display vesp is booting...  on the screen
+//3- Display loading kernel... on the screen
+//4- Load kernel into memory blocks 7 and 8
+//5- Insert  delay 
+//6- Display vesp: on the screen
+//7- Blink a cursor for command entry
+// 8 + 4096 + 4 + 9*16 = 8 + 4100 + 144 = 4252
+// bootstrap code: initialize the screen variables and clear the screen                                 vesp.address
 
 0x2008;   0x0000;  // clear location 8   (cursor-x)        //020-021
 0x2009;   0x0000;  // clear location 9   (cursor-y)        //022-023

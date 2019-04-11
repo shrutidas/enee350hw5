@@ -1,0 +1,135 @@
+
+0x23C0;  0x0065;//write e; 0x0700-701-line 380 to 3BF(blank) 3C0-3FF (enter:)
+0x23C1;  0x006E;//write n; 0x0702-703
+0x23C2;  0x0074;//write t; 0x0704-705
+0x23C3;  0x0065;//write e; 0x0706-707
+0x23C4;  0x0072;//write r; 0x0708-709
+0x23C5;  0x003A;//write :; 0x070A-70B
+//This can be extended further
+
+//load address segments
+0x2400;  0x0064;//write d; 0x0781-782-----line 400 to 43F (d-address:)
+0x2401;  0x002D;//write -; 0x0783-784
+0x2402;  0x0061;//write a; 0x0785-786
+0x2403;  0x0064;//write d; 0x0787-788
+0x2404;  0x0064;//write d; 0x0789-78A
+0x2405;  0x0072;//write r; 0x078B-78C
+0x2406;  0x0065;//write e; 0x078D-78E
+0x2407;  0x0073;//write s; 0x078F-790
+0x2408;  0x0073;//write s; 0x0791-792
+0x2409;  0x003A;//write :; 0x0793-794
+
+0x2440;  0x006D;//write m; 0x0795-796-----line 440 to 47F (m-address:)
+0x2441;  0x002D;//write -; 0x0797-798
+0x2442;  0x0061;//write a; 0x0799-79A
+0x2443;  0x0064;//write d; 0x079B-79C
+0x2444;  0x0064;//write d; 0x079D-79E
+0x2445;  0x0072;//write r; 0x079F-7A0
+0x2446;  0x0065;//write e; 0x07A1-7A2
+0x2447;  0x0073;//write s; 0x07A3-7A4
+0x2448;  0x0073;//write s; 0x07A5-7A6
+0x2449;  0x003A;//write :; 0x07A7-7A8
+
+//load loop (works)
+//disk address is at 0x0010, memory address is at 0x0014
+0x3002;   0x0010; //initialize IX to disk addr. //0x0800-801
+
+0x2001;   0xFFFF; //load FFFF into B    //0x0802-803  //end marker
+0xE000;                               //load next word to A  //0x0804
+0x3018;   0x0000; //save it into temp-1         //0x0805-806
+0x0300;  //A=A-B                       //0x0807
+
+0x2001;   0x0815; //set exit address   //0x0808-809
+0x7100;  //Jump if A = 0      //0x080A
+
+0x3010;   0x0002;//save IX to temp-2 //0x080B-80C //0010 holds index to disk
+0x3002;   0x0014;//load IX from 0x0014 //0x080D-80E //0014 holds index to core
+0xF018; //copy temp-1 to MEMORY[IX]   //0x080F
+0x3014;   0x0002; //store IX back into 0x0014   //0x0810-811
+0x3002;   0x0010; //restore IX                  //0x0812-813
+0x4802;  //Jump back to the loop       //0x0814
+0x3002;   0x0014; //load  IX from 0x0014 //0x0815-816 //0014 holds index to core
+0xF018; //copy temp-1 to MEMORY[IX]   //0x0817
+0x7700; //No-operation                //0x0818
+
+//save loop (works)
+
+//disk address is at 0x0014, memory address is at 0x0010
+0x3002;   0x0010; //initialize IX to mem. addr.//0x0820-821
+
+0x2001;   0xFFFF; //load FFFF into B           //0x0822-823
+0xE000;                               //load next instruction to A //0x0824
+0x3018;   0x0000; //save it into temp-1        //0x0825-826
+0x0300;     //A=A-B       //0x0827
+
+0x2001;   0x0835; //set exit address           //0x0828-829
+0x7100;  //Jump if A = 0              //0x082A
+
+0x3010;   0x0002; //save  IX to temp-2         //0x082B-82C
+0x3002;   0x0014; //load  IX from 0x0014       //0x082D-82E
+0xF018;                               //copy temp-1 to MEMORY[IX]  //0x082F
+0x3014;   0x0002; //store IX back into 0x0014  //0x0830-831
+0x3002;   0x0010; //restore IX                 //0x0832-833
+0x4822; //Jump back to the loop      //0x0834
+0x3002;   0x0014; //load  IX from 0x0014       //0x0835-836
+0xF018;  //copy temp-1 to MEMORY[IX]  //0x0837
+0x7700;  //insert FFFF and hang       //0x0838
+
+
+//execute loop (works)
+0x3001;   0x0010; //set B reg. to the addr. ent. by user //0x0840-841          
+0x7800; //jump to the 1st instr. in spec. prog.//0x0842
+
+//read loop (works)
+0x2480;  0x0065;   //write e;   //0x0850-851--line 480 to 4BF (m-address:)
+0x2481;  0x006E;   //write n;   //0x0852-853
+0x2482;  0x0074;   //write t;   //0x0854-855
+0x2483;  0x0065;   //write e;   //0x0856-857
+0x2484;  0x0072;   //write r;   //0x0858-859
+0x2485;  0x0020;   //write ' '; //0x085A-85B
+0x2486;  0x006E;   //write n;   //0x085C-85D
+0x2487;  0x0065;   //write e;   //0x085E-85F
+0x2488;  0x0078;   //write x;   //0x0860-861
+0x2489;  0x0074;   //write t;   //0x0862-863
+0x248A;  0x0020;   //write ' '; //0x0864-865
+0x248B;  0x0063;   //write c;   //0x0866-867
+0x248C;  0x006F;   //write o;   //0x0868-869
+0x248D;  0x0064;   //write d;   //0x086A-86B
+0x248E;  0x0065;   //write e;   //0x086C-86D
+0x248F;  0x003A;   //write :;   //0x086E-86F
+
+//memory address is at 0x0010
+0x3002;   0x0010; //initialize IX to mem. addr.//0x0870-871
+
+0x2001;   0xFFFF;    //load FFFF into B        //0x0872-873
+0x3000;   0x0014;    //load next inst. to A    //0x0874-875
+0x3018;   0x0000;    //save it into temp-1     //0x0876-877
+0x0300;  //A=A-B    //0x0878
+0x2001;   0x087E;    //set exit address        //0x0879-87A
+0x7100;  //Jump if A = 0  //0x087B
+
+0xF018; //copy temp-1 to MEMORY[IX] //0x087C
+0x4872; //Jump back to the loop  //0x087D
+0xF018; //copy temp-1 to MEMORY[IX]   //0x087E
+0x7700;//No operation //0x087F
+
+//write loop (works)
+0x2480;  0x0061;     //write a;                    //0x0890-891
+0x2481;  0x0064;     //write d;                    //0x0892-893
+0x2482;  0x0064;     //write d;                    //0x0894-895
+0x2483;  0x0072;     //write r;                    //0x0896-897
+0x2484;  0x0065;     //write e;                    //0x0898-899
+0x2485;  0x0073;     //write s;                    //0x089A-89B
+0x2486;  0x0073;     //write s;                    //0x089C-89D
+0x2487;  0x003A;     //write :;                    //0x089E-89F
+
+0x3002;   0x0010;    //initialize IX to memory add.//0x08A0-8A1
+0x2001;   0xFFFF;    //load FFFF into B            //0x08A2-8A3
+0xE000;                                  //load next instruction to A  //0x08A4
+0x3018;   0x0000;    //save it into temp-1         //0x08A5-8A6
+0x0300;                                  //A=A-B                       //0x08A7
+0x2001;   0x08AC;    //set exit address            //0x08A8-8A9
+0x7100;                                  //Jump if A = 0               //0x08AA
+
+0x48A2;                                  //Jump back to the loop       //0x08AB
+0x7700;                                  //No-operation                //0x08AC        

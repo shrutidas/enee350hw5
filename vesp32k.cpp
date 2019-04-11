@@ -15,13 +15,9 @@
 /*destroying and/or deleting any information, data, code, program or file     *    
 /*that may be stored in the memory of user's computer.                        *
 /*****************************************************************************/
-
-
 /*      Please communicate all your questions and comments to                */     
 /*                    A. Yavuz Oruc at yavuz@sabatech.com                    */
-
 /*      This version fixes some bugs in Version3.0,1,2XK and more reliable.  */
-
 /*--------------------------New---Boot vector---New---------------------------*/
 /* Boot vector displays "vesp is booting...." while it is booting, and        */
 /* "enter command" when it is done. Thereafter, it blinks a cursor following  */
@@ -32,8 +28,6 @@
 /*  and a HDISK[65536] memory. A virtual address register is added to handle  */
 /*  memory references to the HDISK memory.                                    */
 /*-------------------------------End Boot vector------------------------------*/
-
-
 /*--------------------Changes and additions in this version-------------------*/
 /*                                                                            */
 /* This is the 40-instruction version of vesp                                 */
@@ -41,8 +35,6 @@
 /* results. For example, add instruction is extended to include B and IX as   */
 /* operands as results.                                                       */
 /******************************************************************************/
-
-
 /* -vesp programs which are entered at the console can be saved in a file.    */
 /* Warning!!!! This program overwrites any data in the filename  which is     */
 /* specified at the console in response to the prompt for saving a vesp       */
@@ -102,10 +94,7 @@
 /* IOB: Or  B          Opcode: 1011  0001 B = A | B                        HexCode  B1
 /* SLB: Shift left  B  Opcode: 1100  0001 B << 1                           HexCode  C1
 /* SRB: Shift right B  Opcode: 1101  0001 B >> 1                           HexCode  D1
-
-
 /*         Programs are entered and displayed in hex code. */
-
 /*  Vesp Memory Map (Subject to Revision)
     ------------------------------------------------
     Memory[0x000]--A                               |
@@ -195,22 +184,18 @@ Memory[0x1000-FEFF]------HDISK                 |
 |                                                    
 |  
 ------------------------------------------------  
-
 ------------------------------------------------  
 |                                                    
 Memory[0xFF00]------Bootstrap code             |
 |                                                    
 |  
 ------------------------------------------------  
-
 */
-
 #include <iostream> 
 #include <iomanip>
 #include <stdio.h>
 #include <limits.h> 
 #include <stdlib.h>
-
 void initialize(void);              //Revised
 int  readprogram(void);
 void displayprogram(int progend); 
@@ -236,21 +221,15 @@ typedef struct
     short   newcommand, readcommand;
 }
 architecture;  architecture   vesp;
-
 using namespace std;
-
 int j=1;
-
 int main(void)
 {
     //int address = 0,i = 0,action,action2,progend;
-
     initialize();//AYO:  create and copy the boot vector into vesp's memory. Create kernel and store it on the disk, 0x1000...
     bootstrap(); //Copy from bootstrap into vesp.MEMORY[020,....]
     return 1; 
 }
-
-
 void bootstrap(void) // delegated to the BIOS chip
 {
     unsigned int address = 0;
@@ -262,8 +241,6 @@ void bootstrap(void) // delegated to the BIOS chip
     vesp.PC = 0x020; //This is where everything starts at :-)
     boot();
 }
-
-
 void boot(void)
 {
     short i;
@@ -274,7 +251,6 @@ void boot(void)
     //display the message "vesp is booting..."
     updatescreen(0,63);
     delay(1);
-
     //write the message "loading kernel...."
     for(i = 4273; i<= 4290 && vesp.reset == 0; i++) maincycle(0);
     //display the message "loading kernel"
@@ -287,12 +263,9 @@ void boot(void)
     //call kernel
     kernel();
 }
-
-
 void initialize(void)
 {
     vesp.PC = vesp.MEMORY[0] = vesp.MEMORY[1] = vesp.MEMORY[2] = vesp.MEMORY[3] = vesp.MEMORY[4] = vesp.IR = 0; vesp.reset = 0; vesp.clock = 0;
-
     //vesp's boot code begins at location 0x0020.
     // When vesp starts, it first loads the boot code from vesp.Bootsrap into vesp.MEMORY[0x0020-..]
     //It then carries out the following steps:
@@ -305,13 +278,11 @@ void initialize(void)
     //7- Blink a cursor for command entry
     // 8 + 4096 + 4 + 9*16 = 8 + 4100 + 144 = 4252
     // bootstrap code: initialize the screen variables and clear the screen                                 vesp.address
-
     vesp.BOOTSTRAP[0]    =  0x2008; vesp.BOOTSTRAP[1]    =  0x0000;  // clear location 8   (cursor-x)        //020-021
     vesp.BOOTSTRAP[2]    =  0x2009; vesp.BOOTSTRAP[3]    =  0x0000;  // clear location 9   (cursor-y)        //022-023
     vesp.BOOTSTRAP[4]    =  0x200A; vesp.BOOTSTRAP[5]    =  0x000F;  // set   location A   (pixel color)     //024-025
     vesp.BOOTSTRAP[6]    =  0x200B; vesp.BOOTSTRAP[7]    =  0x0000;  // set   display mode (ASCII)           //026-027
     vesp.BOOTSTRAP[8]    =  0x200C; vesp.BOOTSTRAP[9]    =  0x002B;  // set   pixel symbol  ('+' sign)       //028-029
-
     // Clear the frame buffer(insert white space). The frame Buffer has an image of vesp's screen)
     // The screen has 16x64 = 1024 ascii characters
     vesp.BOOTSTRAP[0xA]  =  0x2002; vesp.BOOTSTRAP[0xB]  = 0x0300;  // load IX with 0x0300 (768)-screen[0]   //02A-02B
@@ -321,7 +292,6 @@ void initialize(void)
     // else load space into next framebuffer location
     vesp.BOOTSTRAP[0x12] = 0x9000;                                  // decrement A                           //032
     vesp.BOOTSTRAP[0x13] = 0x4030;                                  // loop back to check if A is 0          //033
-
     // insert a carriage return at the end of each line
     vesp.BOOTSTRAP[0x14] = 0x2002; vesp.BOOTSTRAP[0x15]  = 0x033F;  // load IX with 0x033F                   //034-035
     vesp.BOOTSTRAP[0x16] = 0x2000; vesp.BOOTSTRAP[0x17]  = 0x0010;  // load 0x0010 into A (A=16)             //036-037
@@ -337,7 +307,6 @@ void initialize(void)
     vesp.BOOTSTRAP[0x24] = 0x3002; vesp.BOOTSTRAP[0x25] = 0x0000;   // save A into IX                        //044-045
     vesp.BOOTSTRAP[0x26] = 0x3000; vesp.BOOTSTRAP[0x27] = 0x000F;   // restore A from temp                   //046-047
     vesp.BOOTSTRAP[0x28] = 0x403C;                                  // loop back to check if A is 0          //048
-
     // write the message  "vesp is booting..."                                                         
     vesp.BOOTSTRAP[0x29] = 0x2300; vesp.BOOTSTRAP[0x2A] = 0x0076;  // write v   //049-04A---line 300 to 33F (vesp...)
     vesp.BOOTSTRAP[0x2B] = 0x2301; vesp.BOOTSTRAP[0x2C] = 0x0065;  // write e   //04B-04C
@@ -357,7 +326,6 @@ void initialize(void)
     vesp.BOOTSTRAP[0x47] = 0x230F; vesp.BOOTSTRAP[0x48] = 0x002E;  // write .   //067-068
     vesp.BOOTSTRAP[0x49] = 0x2310; vesp.BOOTSTRAP[0x4A] = 0x002E;  // write .   //069-06A
     vesp.BOOTSTRAP[0x4B] = 0x2311; vesp.BOOTSTRAP[0x4C] = 0x002E;  // write .   //06B-06C
-
     // display the prompt: "loading kernel:"  
     vesp.BOOTSTRAP[0x4D] = 0x2340; vesp.BOOTSTRAP[0x4E] =  0x006C; // write l   //06D-06E-----line 340 to 37F (load...)
     vesp.BOOTSTRAP[0x4F] = 0x2341; vesp.BOOTSTRAP[0x50] =  0x006F; // write o   //06F-070
@@ -377,7 +345,6 @@ void initialize(void)
     vesp.BOOTSTRAP[0x6B] = 0x234F; vesp.BOOTSTRAP[0x6C] =  0x002E; // .         //08B-08C
     vesp.BOOTSTRAP[0x6D] = 0x2350; vesp.BOOTSTRAP[0x6E] =  0x002E; // .         //08D-08E
     vesp.BOOTSTRAP[0x6F] = 0x2351; vesp.BOOTSTRAP[0x70] =  0x002E; // .         //08F-090
-
     // Load the kernel from vesp.HDISK[1000-12FF] into vesp.MEMORY[0700-09FF]
     vesp.BOOTSTRAP[0x71] = 0x2002; vesp.BOOTSTRAP[0x72] =  0x1000;// Load 0x1000 into IX                     //091-092
     vesp.BOOTSTRAP[0x73] = 0x2007; vesp.BOOTSTRAP[0x74] =  0x0700;// Load loc.7 with 0x0700                  //093-094
@@ -392,9 +359,7 @@ void initialize(void)
     vesp.BOOTSTRAP[0x82] = 0x9000;  // Decrement A   //0A2
     vesp.BOOTSTRAP[0x83] = 0x4097;  // Loop back to check if A is 0 //0A3
     vesp.BOOTSTRAP[0x84] = 0x4700; // jump to location 0x0700   //0A4
-
     //execute the kernel once the kernel-code is allowed to run...
-
     vesp.HDISK[0x1000] = 0x23C0; vesp.HDISK[0x1001] = 0x0065;//write e; 0x0700-701-line 380 to 3BF(blank) 3C0-3FF (enter:)
     vesp.HDISK[0x1002] = 0x23C1; vesp.HDISK[0x1003] = 0x006E;//write n; 0x0702-703
     vesp.HDISK[0x1004] = 0x23C2; vesp.HDISK[0x1005] = 0x0074;//write t; 0x0704-705
@@ -402,7 +367,6 @@ void initialize(void)
     vesp.HDISK[0x1008] = 0x23C4; vesp.HDISK[0x1009] = 0x0072;//write r; 0x0708-709
     vesp.HDISK[0x100A] = 0x23C5; vesp.HDISK[0x100B] = 0x003A;//write :; 0x070A-70B
     //This can be extended further
-
     //load address segments
     vesp.HDISK[0x1081] = 0x2400; vesp.HDISK[0x1082] = 0x0064;//write d; 0x0781-782-----line 400 to 43F (d-address:)
     vesp.HDISK[0x1083] = 0x2401; vesp.HDISK[0x1084] = 0x002D;//write -; 0x0783-784
@@ -414,7 +378,6 @@ void initialize(void)
     vesp.HDISK[0x108F] = 0x2407; vesp.HDISK[0x1090] = 0x0073;//write s; 0x078F-790
     vesp.HDISK[0x1091] = 0x2408; vesp.HDISK[0x1092] = 0x0073;//write s; 0x0791-792
     vesp.HDISK[0x1093] = 0x2409; vesp.HDISK[0x1094] = 0x003A;//write :; 0x0793-794
-
     vesp.HDISK[0x1095] = 0x2440; vesp.HDISK[0x1096] = 0x006D;//write m; 0x0795-796-----line 440 to 47F (m-address:)
     vesp.HDISK[0x1097] = 0x2441; vesp.HDISK[0x1098] = 0x002D;//write -; 0x0797-798
     vesp.HDISK[0x1099] = 0x2442; vesp.HDISK[0x109A] = 0x0061;//write a; 0x0799-79A
@@ -425,19 +388,15 @@ void initialize(void)
     vesp.HDISK[0x10A3] = 0x2447; vesp.HDISK[0x10A4] = 0x0073;//write s; 0x07A3-7A4
     vesp.HDISK[0x10A5] = 0x2448; vesp.HDISK[0x10A6] = 0x0073;//write s; 0x07A5-7A6
     vesp.HDISK[0x10A7] = 0x2449; vesp.HDISK[0x10A8] = 0x003A;//write :; 0x07A7-7A8
-
     //load loop (works)
     //disk address is at 0x0010, memory address is at 0x0014
     vesp.HDISK[0x1100] = 0x3002;  vesp.HDISK[0x1101] = 0x0010; //initialize IX to disk addr. //0x0800-801
-
     vesp.HDISK[0x1102] = 0x2001;  vesp.HDISK[0x1103] = 0xFFFF; //load FFFF into B    //0x0802-803  //end marker
     vesp.HDISK[0x1104] = 0xE000;                               //load next word to A  //0x0804
     vesp.HDISK[0x1105] = 0x3018;  vesp.HDISK[0x1106] = 0x0000; //save it into temp-1         //0x0805-806
     vesp.HDISK[0x1107] = 0x0300;  //A=A-B                       //0x0807
-
     vesp.HDISK[0x1108] = 0x2001;  vesp.HDISK[0x1109] = 0x0815; //set exit address   //0x0808-809
     vesp.HDISK[0x110A] = 0x7100;  //Jump if A = 0      //0x080A
-
     vesp.HDISK[0x110B] = 0x3010;  vesp.HDISK[0x110C] = 0x0002;//save IX to temp-2 //0x080B-80C //0010 holds index to disk
     vesp.HDISK[0x110D] = 0x3002;  vesp.HDISK[0x110E] = 0x0014;//load IX from 0x0014 //0x080D-80E //0014 holds index to core
     vesp.HDISK[0x110F] = 0xF018; //copy temp-1 to MEMORY[IX]   //0x080F
@@ -447,20 +406,15 @@ void initialize(void)
     vesp.HDISK[0x1115] = 0x3002;  vesp.HDISK[0x1116] = 0x0014; //load  IX from 0x0014 //0x0815-816 //0014 holds index to core
     vesp.HDISK[0x1117] = 0xF018; //copy temp-1 to MEMORY[IX]   //0x0817
     vesp.HDISK[0x1118] = 0x7700; //No-operation                //0x0818
-
     //save loop (works)
-
     //disk address is at 0x0014, memory address is at 0x0010
     vesp.HDISK[0x1120] = 0x3002;  vesp.HDISK[0x1121] = 0x0010; //initialize IX to mem. addr.//0x0820-821
-
     vesp.HDISK[0x1122] = 0x2001;  vesp.HDISK[0x1123] = 0xFFFF; //load FFFF into B           //0x0822-823
     vesp.HDISK[0x1124] = 0xE000;                               //load next instruction to A //0x0824
     vesp.HDISK[0x1125] = 0x3018;  vesp.HDISK[0x1126] = 0x0000; //save it into temp-1        //0x0825-826
     vesp.HDISK[0x1127] = 0x0300;     //A=A-B       //0x0827
-
     vesp.HDISK[0x1128] = 0x2001;  vesp.HDISK[0x1129] = 0x0835; //set exit address           //0x0828-829
     vesp.HDISK[0x112A] = 0x7100;  //Jump if A = 0              //0x082A
-
     vesp.HDISK[0x112B] = 0x3010;  vesp.HDISK[0x112C] = 0x0002; //save  IX to temp-2         //0x082B-82C
     vesp.HDISK[0x112D] = 0x3002;  vesp.HDISK[0x112E] = 0x0014; //load  IX from 0x0014       //0x082D-82E
     vesp.HDISK[0x112F] = 0xF018;                               //copy temp-1 to MEMORY[IX]  //0x082F
@@ -470,12 +424,9 @@ void initialize(void)
     vesp.HDISK[0x1135] = 0x3002;  vesp.HDISK[0x1136] = 0x0014; //load  IX from 0x0014       //0x0835-836
     vesp.HDISK[0x1137] = 0xF018;  //copy temp-1 to MEMORY[IX]  //0x0837
     vesp.HDISK[0x1138] = 0x7700;  //insert FFFF and hang       //0x0838
-
-
     //execute loop (works)
     vesp.HDISK[0x1140] = 0x3001;  vesp.HDISK[0x1141] = 0x0010; //set B reg. to the addr. ent. by user //0x0840-841          
     vesp.HDISK[0x1142] = 0x7800; //jump to the 1st instr. in spec. prog.//0x0842
-
     //read loop (works)
     vesp.HDISK[0x1150] = 0x2480; vesp.HDISK[0x1151] = 0x0065;   //write e;   //0x0850-851--line 480 to 4BF (m-address:)
     vesp.HDISK[0x1152] = 0x2481; vesp.HDISK[0x1153] = 0x006E;   //write n;   //0x0852-853
@@ -493,22 +444,18 @@ void initialize(void)
     vesp.HDISK[0x116A] = 0x248D; vesp.HDISK[0x116B] = 0x0064;   //write d;   //0x086A-86B
     vesp.HDISK[0x116C] = 0x248E; vesp.HDISK[0x116D] = 0x0065;   //write e;   //0x086C-86D
     vesp.HDISK[0x116E] = 0x248F; vesp.HDISK[0x116F] = 0x003A;   //write :;   //0x086E-86F
-
     //memory address is at 0x0010
     vesp.HDISK[0x1170] = 0x3002;  vesp.HDISK[0x1171] = 0x0010; //initialize IX to mem. addr.//0x0870-871
-
     vesp.HDISK[0x1172] = 0x2001;  vesp.HDISK[0x1173] = 0xFFFF;    //load FFFF into B        //0x0872-873
     vesp.HDISK[0x1174] = 0x3000;  vesp.HDISK[0x1175] = 0x0014;    //load next inst. to A    //0x0874-875
     vesp.HDISK[0x1176] = 0x3018;  vesp.HDISK[0x1177] = 0x0000;    //save it into temp-1     //0x0876-877
     vesp.HDISK[0x1178] = 0x0300;  //A=A-B    //0x0878
     vesp.HDISK[0x1179] = 0x2001;  vesp.HDISK[0x117A] = 0x087E;    //set exit address        //0x0879-87A
     vesp.HDISK[0x117B] = 0x7100;  //Jump if A = 0  //0x087B
-
     vesp.HDISK[0x117C] = 0xF018; //copy temp-1 to MEMORY[IX] //0x087C
     vesp.HDISK[0x117D] = 0x4872; //Jump back to the loop  //0x087D
     vesp.HDISK[0x117E] = 0xF018; //copy temp-1 to MEMORY[IX]   //0x087E
     vesp.HDISK[0x117F] = 0x7700;//No operation //0x087F
-
     //write loop (works)
     vesp.HDISK[0x1190] = 0x2480; vesp.HDISK[0x1191] = 0x0061;     //write a;                    //0x0890-891
     vesp.HDISK[0x1192] = 0x2481; vesp.HDISK[0x1193] = 0x0064;     //write d;                    //0x0892-893
@@ -518,7 +465,6 @@ void initialize(void)
     vesp.HDISK[0x119A] = 0x2485; vesp.HDISK[0x119B] = 0x0073;     //write s;                    //0x089A-89B
     vesp.HDISK[0x119C] = 0x2486; vesp.HDISK[0x119D] = 0x0073;     //write s;                    //0x089C-89D
     vesp.HDISK[0x119E] = 0x2487; vesp.HDISK[0x119F] = 0x003A;     //write :;                    //0x089E-89F
-
     vesp.HDISK[0x11A0] = 0x3002;  vesp.HDISK[0x11A1] = 0x0010;    //initialize IX to memory add.//0x08A0-8A1
     vesp.HDISK[0x11A2] = 0x2001;  vesp.HDISK[0x11A3] = 0xFFFF;    //load FFFF into B            //0x08A2-8A3
     vesp.HDISK[0x11A4] = 0xE000;                                  //load next instruction to A  //0x08A4
@@ -526,14 +472,9 @@ void initialize(void)
     vesp.HDISK[0x11A7] = 0x0300;                                  //A=A-B                       //0x08A7
     vesp.HDISK[0x11A8] = 0x2001;  vesp.HDISK[0x11A9] = 0x08AC;    //set exit address            //0x08A8-8A9
     vesp.HDISK[0x11AA] = 0x7100;                                  //Jump if A = 0               //0x08AA
-
     vesp.HDISK[0x11AC] = 0x48A2;                                  //Jump back to the loop       //0x08AB
     vesp.HDISK[0x11AD] = 0x7700;                                  //No-operation                //0x08AC        
-
 }
-
-
-
 void updatescreen(short x, short y)
 {
     short i,j;
@@ -542,25 +483,17 @@ void updatescreen(short x, short y)
         for (j=0; j <= 63; j++)
         {
             vesp.SCREEN[i][j] = vesp.MEMORY[0x300 + 64*i+j];}
-
     }
-
-
     for (j=0;j<= y; j++) cout << (char) vesp.SCREEN[x][j];
 }
-
-
 void delay(float t)
 {
-
     clock_t ticks; 
     ticks = clock() + (clock_t) (t * (float) CLOCKS_PER_SEC); 
     while ( ticks > clock() ){
     }
     ;
 }
-
-
 void kernel (void)
 {
     int i;
@@ -571,27 +504,21 @@ void kernel (void)
         vesp.PC = 0x700; //execute display "enter" code
         for(i = 12208; i<= 12213 && vesp.reset == 0; i++) maincycle(0); // invite (write "enter:") (new command)
         updatescreen(3,6); //display the frame buffer
-
         vesp.MEMORY[0x0010] = getchar(); //read in the next command
         getchar();
-
         switch(vesp.MEMORY[0x0010]) // This could be done in vesp as well- but doing it in C simplifies things.
         {
-
             case 'l':
-
                 vesp.PC = 0x781; for(i = 12214; i<= 12223 && vesp.reset == 0; i++) maincycle(0); //Display "d-address:"
                 updatescreen(4,10); //display the frame buffer
                 vesp.MEMORY[0x0010] = getchar(); vesp.MEMORY[0x0011] = getchar(); 
                 vesp.MEMORY[0x0012] = getchar(); vesp.MEMORY[0x0013] = getchar();
                 getchar();
-
                 vesp.PC = 0x795; for(i = 12224; i<= 12233 && vesp.reset == 0; i++) maincycle(0); //Display "m-address"
                 updatescreen(5,10); //display the frame buffer
                 vesp.MEMORY[0x0014] = getchar(); vesp.MEMORY[0x0015] = getchar(); 
                 vesp.MEMORY[0x0016] = getchar(); vesp.MEMORY[0x0017] = getchar();
                 getchar();
-
                 //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
                 for(i=0x0010;i<= 0x0017;i++)
                     if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
@@ -601,42 +528,31 @@ void kernel (void)
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
                         else {
                             cout << "Invalid address. Try again.\n"; break;}
-
-
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013]; //Disk address
                 vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017]; //RAM address
-
                 vesp.PC = 0x800; //load using vesp.
                 for(i = 12234; i<= 12234 && vesp.reset == 0; i++) maincycle(0); //initialize IX
-
                 while(programSize++ <= 256)
                 {
                     for(i = 12235; i<= 12238 && vesp.reset == 0; i++) maincycle(0);
                     if (vesp.MEMORY[0] == 0) 
                     {
                         for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;}
-
                     else
                         for(i = 12239; i<= 12246 && vesp.reset == 0; i++) maincycle(0);
                 }
-
-
                 break;
-
             case 's':
-
                 vesp.PC = 0x795; for(i = 12214; i<= 12223 && vesp.reset == 0; i++) maincycle(0); 
                 updatescreen(5,10); //display the frame buffer
                 vesp.MEMORY[0x0010] = getchar(); vesp.MEMORY[0x0011] = getchar(); 
                 vesp.MEMORY[0x0012] = getchar(); vesp.MEMORY[0x0013] = getchar();
                 getchar();
-
                 vesp.PC = 0x781; for(i = 12224; i<= 12233 && vesp.reset == 0; i++) maincycle(0); 
                 updatescreen(4,10); //display the frame buffer
                 vesp.MEMORY[0x0014] = getchar(); vesp.MEMORY[0x0015] = getchar(); 
                 vesp.MEMORY[0x0016] = getchar(); vesp.MEMORY[0x0017] = getchar();
                 getchar();
-
                 //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
                 for(i=0x0010;i<= 0x0017;i++)
                     if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
@@ -646,37 +562,26 @@ void kernel (void)
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
                         else {
                             cout << "Invalid address. Try again.\n"; break;}
-
-
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013]; //RAM address
                 vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017]; //Disk address
-
                 vesp.PC = 0x820; //save using vesp.
                 for(i = 12234; i<= 12234 && vesp.reset == 0; i++) maincycle(0); //initialize IX
-
                 while(programSize++ <= 256)
                 {
                     for(i = 12235; i<= 12238 && vesp.reset == 0; i++) maincycle(0);
                     if (vesp.MEMORY[0] == 0) //Check if the end of save is reached
                     {
                         for(i = 12239; i<= 12242 && vesp.reset == 0; i++) maincycle(0); break;}
-
                     else
                         for(i = 12239; i<= 12246 && vesp.reset == 0; i++) maincycle(0);
                 }
-
-
                 break;
-
-
             case 'e':
-
                 vesp.PC = 0x795; for(i = 12214; i<= 12223 && vesp.reset == 0; i++) maincycle(0); 
                 updatescreen(5,10); //display the frame buffer
                 vesp.MEMORY[0x0010] = getchar(); vesp.MEMORY[0x0011] = getchar(); 
                 vesp.MEMORY[0x0012] = getchar(); vesp.MEMORY[0x0013] = getchar();
                 getchar();
-
                 //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
                 for(i=0x0010;i<= 0x0013;i++)
                     if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
@@ -686,24 +591,18 @@ void kernel (void)
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
                         else {
                             cout << "Invalid address. Try again.\n"; break;}
-
-
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
-
                 vesp.PC = 0x0840;
                 for(i = 12224; i<= 12225 && vesp.reset == 0; i++) maincycle(0); //jump to the location specified by the user (see the execute  vesp code above)
                 while(vesp.reset == 0) maincycle(1); //execute the code
                 vesp.reset = 0; //To allow for multiple executions. 4/18/2009
                 break; 
-
             case 'r':
-
                 vesp.PC = 0x0795; for(i = 12214; i<= 12223 && vesp.reset == 0; i++) maincycle(0); 
                 updatescreen(5,10); //display the frame buffer
                 vesp.MEMORY[0x0010] = getchar(); vesp.MEMORY[0x0011] = getchar(); //get the memory address to buffer the console
                 vesp.MEMORY[0x0012] = getchar(); vesp.MEMORY[0x0013] = getchar();
                 getchar();
-
                 //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
                 for(i=0x0010;i<= 0x0013;i++)
                     if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
@@ -713,24 +612,18 @@ void kernel (void)
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
                         else {
                             cout << "Invalid address. Try again.\n"; break;}
-
-
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
-
                 vesp.PC = 0x0870; //read using vesp
                 for(i = 12224; i<= 12224 && vesp.reset == 0; i++) maincycle(0); //Initialize IX.
-
                 while(programSize++ <= 256)
                 {
                     vesp.PC = 0x0850;
                     for(i = 12225; i<= 12240 && vesp.reset == 0; i++) maincycle(0); 
                     updatescreen(6,16); //display the frame buffer (enter next code:)
-
                     //read in the next insruction
                     vesp.MEMORY[0x0014] = getchar(); vesp.MEMORY[0x0015] = getchar(); 
                     vesp.MEMORY[0x0016] = getchar(); vesp.MEMORY[0x0017] = getchar();
                     getchar();
-
                     //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
                     for(i=0x0014;i<= 0x0017;i++)
                         if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
@@ -740,31 +633,22 @@ void kernel (void)
                                 vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
                             else {
                                 cout << "Invalid address. Try again.\n"; break;}
-
-
                     vesp.MEMORY[0x0014] = vesp.MEMORY[0x0014] << 12 | vesp.MEMORY[0x0015] << 8 | vesp.MEMORY[0x0016] << 4 | vesp.MEMORY[0x0017];
-
                     vesp.PC = 0x0872;
                     for(i = 12241; i<= 12244 && vesp.reset == 0; i++) maincycle(0);
                     //check to stop reading if it is FFFF.
                     if (vesp.MEMORY[0] == 0) {
                         for(i = 12245; i<= 12248 && vesp.reset == 0; i++) maincycle(0); break;}
-
                     else
                         for(i = 12245; i<= 12248 && vesp.reset == 0; i++) maincycle(0);
                 }
-
-
                 break;
-
             case 'w':
-
                 vesp.PC = 0x0890; for(i = 12214; i<= 12221 && vesp.reset == 0; i++) maincycle(0); 
                 updatescreen(6,7); //display the frame buffer
                 vesp.MEMORY[0x0010] = getchar(); vesp.MEMORY[0x0011] = getchar(); 
                 vesp.MEMORY[0x0012] = getchar(); vesp.MEMORY[0x0013] = getchar();
                 getchar();
-
                 //convert ascii digits to hex digits--This could be done in vesp as well-but doing it in C simplifies things considerably
                 for(i=0x0010;i<= 0x0013;i++)
                     if(vesp.MEMORY[i] >= '0' && vesp.MEMORY[i] <= '9')
@@ -774,13 +658,9 @@ void kernel (void)
                             vesp.MEMORY[i] = vesp.MEMORY[i] - 'A' + 10;
                         else {
                             cout << "Invalid address. Try again.\n"; break;}
-
-
                 vesp.MEMORY[0x0010] = vesp.MEMORY[0x0010] << 12 | vesp.MEMORY[0x0011] << 8 | vesp.MEMORY[0x0012] << 4 | vesp.MEMORY[0x0013];
-
                 for(i = 12222; i<= 12222 && vesp.reset == 0; i++) maincycle(0); 
                 //write using vesp.
-
                 while(programSize++ <= 256)
                 {
                     //vesp.PC = 0x08A2;
@@ -792,18 +672,10 @@ void kernel (void)
                     cout << hex << vesp.MEMORY[0x0018] << "\n";
                     for(i = 12227; i<= 12230 && vesp.reset == 0; i++) maincycle(0);
                 }
-
                 break;
-
         }
-
-
     }
-
-
 }
-
-
 int readprogram(void)
 {
     int address,instruction,progend,action,i;
@@ -816,7 +688,6 @@ int readprogram(void)
         cin >> hex >> vesp.PC; 
     }
     while (vesp.PC < 3);
-
     address =  vesp.PC; action = -1;
     cout << "\n";
     do {
@@ -824,49 +695,34 @@ int readprogram(void)
         cin >> action;
     }
     while (action != 0 && action != 1);
-
     if(action == 1) 
     {
         cout << "\nEnter the file name: "; cin >> filename;
-
-
         file = fopen(filename,"r");
         if( file != NULL)
         {
-
             while (fscanf(file,"%x",&instruction) != EOF  &&  address < 8192 ) 
             {
-
                 vesp.MEMORY[address] = instruction; address = address + 1;
             }
-
             fclose(file); 
         }
-
         else
         {
             for (i=0; i <= 24; i++) longfilename[i+72] = filename[i]; 
             file = fopen(longfilename,"r");
             if( file != NULL)
             {
-
                 while (fscanf(file,"%x",&instruction) != EOF  &&  address < 8192 ) 
                 {
                     vesp.MEMORY[address] = instruction; address = address + 1;}
-
                 fclose(file); 
             }
-
             else
             {
                 cout << "The file is not found. Check if file to be opened is in the program directory... \n"; exit(1);}
-
-
-
         }
-
     }
-
     else  
         do {
             cin.clear();
@@ -874,31 +730,23 @@ int readprogram(void)
                 << (address -vesp.PC)  
                 << " using a 4-digit hex number" << "\n";
             cout << "Or type -1 to end your program: ";
-
             cin >> hex >> instruction;   //AYO: read it in hex.
             vesp.MEMORY[address] = instruction;
             address = address + 1;
         }
-
         while ( ( vesp.MEMORY[address-1] !=  -1 ) && (address < 8192)); //AYO: -1 marks the end.
-
     if (address >= 4096) 
     {
         cout << "Memory overflow," 
             << "Please quit from the file menu and restart me!"; 
         return address-1;}
-
     progend = address - 1; 
-
-
     //save the program into a file
     cout << "Enter 0 to continue, 1 to save your program into a file: ";
     cin >> action;
-
     if(action == 1) 
     {
         cout << "\nEnter the file name: "; cin >> filename;
-
         cout << hex;
         file = fopen(filename,"w");
         if( file != NULL)
@@ -906,14 +754,11 @@ int readprogram(void)
             address = vesp.PC;
             while (address < progend ) 
             {
-
                 fprintf(file,"%04X\n",vesp.MEMORY[address]); 
                 address = address + 1; 
             }
-
             fclose(file); 
         }
-
         else
         {
             for (i=0; i <= 24; i++) longfilename[i+72] = filename[i]; 
@@ -924,52 +769,32 @@ int readprogram(void)
                 cout << hex;
                 while (address < progend ) 
                 {
-
                     fprintf(file,"%04X\n",vesp.MEMORY[address]); 
                     address = address + 1; 
                 }
-
-
                 fclose(file); 
             }
-
             else
             {
                 cout << "The file is not found. Check if file to be opened is in the program directory... \n"; exit(1);}
-
-
-
         }
-
     }
-
-
-
     return progend;
-
 }
-
-
-
 void displayprogram(int progend) 
 {
     int i; 
     cout << "\nHere is your program: \n\n";
     for (i = vesp.PC; i<= progend; i++)
     {
-
         cout << "Location "; cout.fill('0');  cout.width(4); cout.setf(ios::uppercase);
         cout <<  hex << i << ": ";  //AYO: display it in uppercase hex. 
-
         cout.fill('0');  cout.width(4); cout.setf(ios::uppercase);
         cout << hex << (0x0000FFFF & vesp.MEMORY[i]) << "\n";
     }
-
 }
-
 void displayregisters(void)
 {
-
     cout << "A = ";  cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
     cout << hex << (0x0000FFFF & vesp.MEMORY[0])<< ", "; 
     cout << "B = ";  cout.fill('0'); cout.width(4); cout.setf(ios::uppercase); 
@@ -978,7 +803,6 @@ void displayregisters(void)
     cout << hex << (0x0000FFFF & vesp.MEMORY[2])<< ", ";
     cout << "VAR = "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
     cout << hex << (0x0000FFFF & vesp.MEMORY[3])<< ", ";
-
     cout << "Z = " <<  vesp.Z << ", ";
     cout << "S = " <<  vesp.S << ", ";
     cout << "C = " <<  vesp.C << ", ";
@@ -991,8 +815,6 @@ void displayregisters(void)
     cout << hex << vesp.IR << ", "; 
     cout << "reset = " << vesp.reset << "\n";
 }
-
-
 void displaymemory(void)
 {
     int location1,location2,i; 
@@ -1011,22 +833,16 @@ void displaymemory(void)
         cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
         cout << hex << (0x0000FFFF & vesp.MEMORY[i]); cout << "\n"; 
     }
-
 }
-
-
 void maincycle(int trace)
 {
     if(trace == 1) 
     {
-
         cout << "Machine Cycle "; 
         cout.fill('0'); cout.width(8); cout.setf(ios::uppercase);
         cout << hex << j << ": ";
     }
-
     j = j+1;
-
     //AYO: Fetch Step
     if(trace == 1)
     {
@@ -1035,7 +851,6 @@ void maincycle(int trace)
         cout << hex << (vesp.PC & 0x0FFFFFFF) << ", ";     
         cout << "\nFETCH SUBCYCLE\n";
     }
-
     fetch(trace);
     if(trace == 1)
     {
@@ -1043,29 +858,22 @@ void maincycle(int trace)
         //AYO: Decode Step
         cout << "DECODE SUBCYCLE\n"; 
     }
-
     decode(trace);
     if(trace == 1)
     {
-
         cout << "Clock cycle = " << vesp.clock << "\n";               
         //AYO: Execute Step   
         cout << "EXECUTE SUBCYCLE"; 
     }
-
     vesp.add = vesp.cmp = 0;  
     execute(); 
     if(trace == 1)
     {
-
         cout << "\nClock cycle = " << vesp.clock << "\n\n";
     }
-
     //AYO: Display the registers 
-
     if(trace == 1)
     {
-
         displayregisters();  
         cout << "add = " << vesp.add << " "; 
         cout << "complement = " << vesp.cmp << "\n\n"; 
@@ -1080,11 +888,8 @@ void maincycle(int trace)
             else
                 if((vesp.MAR >> 12) >= 1 && (vesp.MAR >> 12) <= 14) cout << hex << (0x0000FFFF & vesp.HDISK[vesp.MAR])<< "\n\n";
         }
-
     }
-
 }
-
 void fetch(int trace)
 {
     //clock cycle 1.  Load next instruction's address into MAR. 
@@ -1095,27 +900,20 @@ void fetch(int trace)
     {
         cout << "MAR = "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
         cout << hex << vesp.MAR << ", ";}
-
     vesp.IR = vesp.MEMORY[vesp.MAR]; vesp.clock = vesp.clock +1; 
     if(trace == 1)         
     {
         cout << "IR = "; cout.fill('0'); cout.width(4); cout.setf(ios::uppercase);
         cout << hex << vesp.IR << ", ";}
-
 }
-
-
 void decode(int trace)
 {
-
     if(trace == 1) 
     {
         cout << "Decoded instruction is: "; 
         switch( vesp.IR >> 12)   
         {
-
             case  0x0:
-
                 switch(vesp.IR >> 8 & 0x000F)
                 {
                     case 0x0:
@@ -1139,8 +937,6 @@ void decode(int trace)
                     case 0x9:
                         cout << "CLV\n"; break; // VAR = 0
                 }
-
-
                 break; 
             case  0x1:
                 cout <<  "CMP\n"; break;          
@@ -1153,9 +949,7 @@ void decode(int trace)
                        //Jump if A > 0                   
             case  0x6:
                        cout << "JPS\n"; break; 
-
             case  0x7:
-
                        switch(vesp.IR >> 8 & 0x000F)
                        {
                            case 0x0:
@@ -1177,12 +971,8 @@ void decode(int trace)
                            case 0x8:
                                cout <<  "JMB\n"; break; //Jump via B
                        }
-
-
                        break;
-
             case  0x8:
-
                        switch(vesp.IR >> 8 & 0x000F)
                        {
                            case 0:
@@ -1192,11 +982,8 @@ void decode(int trace)
                            case 2:
                                cout <<  "INX\n"; break; //Increment IX
                        }
-
                        break;		  
-
             case  0x9:
-
                        switch(vesp.IR >> 8 & 0x000F)
                        {
                            case 0x0:
@@ -1206,12 +993,9 @@ void decode(int trace)
                            case 0x2:
                                cout <<  "DEX\n"; break; //Decrement IX
                        }
-
                        break;
-
                        //AND                           
             case  0xA:
-
                        switch(vesp.IR >> 8 & 0x000F)
                        {
                            case 0x0:
@@ -1219,13 +1003,9 @@ void decode(int trace)
                            case 0x1:
                                cout <<  "ANB\n"; break; //B = A && B
                        }
-
                        break;
-
-
                        //IOR                            
             case  0xB:
-
                        switch(vesp.IR >> 8 & 0x000F)
                        {
                            case 0x0:
@@ -1233,12 +1013,9 @@ void decode(int trace)
                            case 0x1:
                                cout <<  "IOB\n"; break; //B = A || B
                        }
-
                        break;
-
                        //Shift left                      
             case  0xC:
-
                        switch(vesp.IR >> 8 & 0x000F)
                        {
                            case 0x0:
@@ -1246,12 +1023,9 @@ void decode(int trace)
                            case 0x1:
                                cout <<  "SLB\n"; break; //B = B << 1
                        }
-
                        break;
-
                        //Shift right                      
             case  0xD:
-
                        switch(vesp.IR >> 8 & 0x000F)
                        {
                            case 0x0:
@@ -1259,20 +1033,13 @@ void decode(int trace)
                            case 0x1:
                                cout <<  "SLB\n"; break; //B = B >> 1
                        }
-
                        break;
-
                        //Move from with index                    //Move to with index
             case  0xE: cout << "MXF\n"; break; case 0xF:
                        cout << "MXT\n"; break;
-
         }
-
     }
-
 }
-
-
 void execute(void)
 {
     short temp;
@@ -1285,7 +1052,6 @@ void execute(void)
         //clock cycle 3.
         //Add 		  
         case  0x0:
-
             switch(vesp.IR >> 8 & 0x000F)
             {
                 case 0x0:
@@ -1303,7 +1069,6 @@ void execute(void)
                     //AYO: Set Sign Flag          
                     vesp.S = (A & 0x8000 ) >> 15;  vesp.add = 1; 
                     break;
-
                 case 0x1:
                     // B  = A + B 
                     B = A + B; vesp.clock = vesp.clock +1;
@@ -1311,14 +1076,12 @@ void execute(void)
                     //AYO: Set Zero Flag
                     vesp.add = 1;
                     break; 
-
                 case 0x2:
                     // IX = IX + A
                     IX = IX + A; vesp.clock = vesp.clock +1;
                     vesp.MEMORY[2] = IX; //Save the sum in MEMORY[2]
                     vesp.add = 1;
                     break;
-
                 case 0x3:
                     // A  = A - B
                     temp = A - B; vesp.clock = vesp.clock +1;                                        
@@ -1334,21 +1097,18 @@ void execute(void)
                     //AYO: Set Sign Flag          
                     vesp.S = (A & 0x8000 ) >> 15;  vesp.sub = 1;
                     break;
-
                 case 0x4:
                     // B = B - A
                     B = B - A; vesp.clock = vesp.clock +1;
                     vesp.MEMORY[1] = B; //Save the sum in MEMORY[1]
                     vesp.sub = 1;
                     break;	
-
                 case 0x5:
                     // IX = IX - A
                     IX = IX - A; vesp.clock = vesp.clock +1;
                     vesp.MEMORY[2] = IX; //Save the sum in MEMORY[2]
                     vesp.sub = 1;
                     break;
-
                 case 0x6:
                     // A = 0
                     A = 0; vesp.clock = vesp.clock +1;
@@ -1356,31 +1116,23 @@ void execute(void)
                     //AYO: Set Zero Flag
                     vesp.Z = 1;
                     break;
-
                 case 0x7:
                     // B = 0
                     B = 0; vesp.clock = vesp.clock +1;
                     vesp.MEMORY[1] = B; //Clear MEMORY[1]
                     break;
-
-
                 case 0x8:
                     // IX = 0
                     IX = 0; vesp.clock = vesp.clock +1;
                     vesp.MEMORY[2] = IX; //Clear MEMORY[2]
                     break;
-
                 case 0x9:
                     // VAR = 0
                     VAR = 0; vesp.clock = vesp.clock +1;
                     vesp.MEMORY[3] = VAR; //Clear MEMORY[3]
                     break;
-
             }
-
-
             break; 
-
             //Complement
         case  0x1:
             A = ~A; vesp.MEMORY[0] = A; 
@@ -1390,7 +1142,6 @@ void execute(void)
             vesp.cmp = 1; break;
             //Load         
         case  0x2:
-
             vesp.MAR += 1;
             vesp.clock = vesp.clock +1; 
             vesp.MDR = vesp.MEMORY[vesp.MAR];
@@ -1398,20 +1149,15 @@ void execute(void)
             {
                 vesp.MAR = vesp.IR&0x0FFF; //without an extra clock
                 vesp.MEMORY[vesp.MAR] = vesp.MDR;}
-
             else if ( VAR >= 1 &&  VAR <= 14)
             {
-
                 vesp.MAR = (VAR << 12)|vesp.IR&0x0FFF;
                 vesp.HDISK[vesp.MAR] = vesp.MDR ;
             }
-
             else {
-
                 cout << "\n page fault- instruction not executed!\n";
                 // This will be a place to call a trap and exit to the OS.
             }
-
             vesp.clock = vesp.clock +1; vesp.lda = 1;
             //AYO: Set Zero Flag
             if(vesp.MAR == 0 && A == 0) vesp.Z = 1; else vesp.Z = 0; 
@@ -1434,24 +1180,20 @@ void execute(void)
                 cout << "\n page fault- instruction not executed!\n";
                 // This will be a place to call a trap and exit to the OS.
             }
-
             if(VAR==0)
             {
                 vesp.MAR = vesp.IR&0x0FFF; //without an extra clock
                 vesp.MEMORY[vesp.MAR] = vesp.MDR;
             }
-
             else if (VAR >= 1 && VAR <= 14)
             {
                 vesp.MAR = (VAR << 12)|vesp.IR&0x0FFF;
                 vesp.HDISK[vesp.MAR]=vesp.MDR;}
-
             else
             {
                 cout << "\n page fault- instruction not executed!\n";
                 // This will be a place to call a trap and exit to the OS.
             }
-
             vesp.clock = vesp.clock + 1; vesp.mov = 1;
             //AYO: Set Zero Flag
             if(vesp.MAR == 0 && A == 0) vesp.Z = 1; else vesp.Z = 0; 
@@ -1479,7 +1221,6 @@ void execute(void)
             vesp.clock = vesp.clock +1; break;  
             //Halt and extended branch
         case 0x7:
-
             switch(vesp.IR >> 8 & 0x000F)
             {
                 case 0x0:
@@ -1520,19 +1261,13 @@ void execute(void)
                         vesp.PC = B;}
                     vesp.jnz = 1;
                     vesp.clock = vesp.clock +1; break;  //Jump if A <= 0
-
                 case 0x7:
                     vesp.clock = vesp.clock +1; vesp.nop = 1; break;  //NOP
-
                 case 0x8:
-
                     vesp.PC = B; vesp.jmb = 1;
                     vesp.clock = vesp.clock +1; break;  //Jump via register B
-
             }
-
             break;
-
         case  0x8:
             //Increment 
             switch(vesp.IR >> 8 & 0x000F)
@@ -1552,7 +1287,6 @@ void execute(void)
                     //AYO: In this implementation, vesp.inc is just symbolically set to 1.
                     //In a bus implementation, the input bus must be loaded with 1 and the 
                     //vesp's computation engine must be programmed to add its operands.
-
                 case 0x1:
                     //Increment B
                     temp = B + 1; vesp.clock = vesp.clock +1;                                        
@@ -1568,7 +1302,6 @@ void execute(void)
                     //AYO: In this implementation, vesp.inc is just symbolically set to 1.
                     //In a bus implementation, the input bus must be loaded with 1 and the 
                     //vesp's computation engine must be programmed to add its operands.
-
                 case 0x2:
                     //Increment IX
                     temp = IX + 1; vesp.clock = vesp.clock +1;                                        
@@ -1585,9 +1318,7 @@ void execute(void)
                     //In a bus implementation, the input bus must be loaded with 1 and the 
                     //vesp's computation engine must be programmed to add its operands.
             }
-
             break;		  
-
         case  0x9:
             //Decrement 
             switch(vesp.IR >> 8 & 0x000F)
@@ -1608,7 +1339,6 @@ void execute(void)
                     //In a bus implementation, the input bus must be loaded with 1 and complemented;
                     // carry-in must be set to vesp.dec, and the vesp's computation engine  
                     // must be programmed to add its operands.
-
                 case 0x1:
                     //Decrement B
                     temp = B - 1; vesp.clock = vesp.clock +1;                                        
@@ -1625,7 +1355,6 @@ void execute(void)
                     //In a bus implementation, the input bus must be loaded with 1 and complemented;
                     // carry-in must be set to vesp.dec, and the vesp's computation engine  
                     // must be programmed to add its operands.
-
                 case 0x2:
                     //Decrement IX
                     temp = IX - 1; vesp.clock = vesp.clock +1;                                        
@@ -1642,14 +1371,10 @@ void execute(void)
                     //In a bus implementation, the input bus must be loaded with 1 and complemented;
                     // carry-in must be set to vesp.dec, and the vesp's computation engine  
                     // must be programmed to add its operands.
-
             }
-
             break;	  
-
             //And
         case  0xA:
-
             switch(vesp.IR >> 8 & 0x000F)
             {
                 case 0x0:
@@ -1658,7 +1383,6 @@ void execute(void)
                     A  = temp;   vesp.MEMORY[0] = A;  //Save the sum in MEMORY[0]
                     //AYO: Set Zero Flag
                     if(A  == 0) vesp.Z = 1; else vesp.Z = 0; vesp.ana = 1; break;
-
                 case 0x1:
                     //B = A && B
                     temp = A & B; vesp.clock = vesp.clock +1;                                        
@@ -1666,13 +1390,9 @@ void execute(void)
                     //AYO: Set Zero Flag
                     if(B  == 0) vesp.Z = 1; else vesp.Z = 0; vesp.anb = 1;  break;
             }
-
             break;
-
-
             //Or
         case  0xB:
-
             switch(vesp.IR >> 8 & 0x000F)
             {
                 case 0x0:
@@ -1681,7 +1401,6 @@ void execute(void)
                     A  = temp;   vesp.MEMORY[0] = A;  //Save the sum in MEMORY[0]
                     //AYO: Set Zero Flag
                     if(A  == 0) vesp.Z = 1; else vesp.Z = 0;  vesp.ioa = 1; break;
-
                 case 0x1:
                     //B = A || B
                     temp = A | B; vesp.clock = vesp.clock +1;                                        
@@ -1689,13 +1408,9 @@ void execute(void)
                     //AYO: Set Zero Flag
                     if(B  == 0) vesp.Z = 1; else vesp.Z = 0;  vesp.iob = 1; break;
             }
-
             break;
-
-
             //shift left
         case  0xC:
-
             switch(vesp.IR >> 8 & 0x000F)
             {
                 case 0x0:
@@ -1706,7 +1421,6 @@ void execute(void)
                     if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
                     //AYO: Set Sign Flag          
                     vesp.S = (A & 0x8000 ) >> 15;  vesp.sla = 1; break;
-
                 case 0x1:
                     //B = B << 1
                     temp = B << 1; vesp.clock = vesp.clock +1;                                        
@@ -1716,13 +1430,9 @@ void execute(void)
                     //AYO: Set Sign Flag          
                     vesp.S = (B & 0x8000 ) >> 15;  vesp.slb = 1; break;
             }
-
             break;
-
-
             //Shift right
         case  0xD:
-
             switch(vesp.IR >> 8 & 0x000F)
             {
                 case 0x0:
@@ -1733,7 +1443,6 @@ void execute(void)
                     if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
                     //AYO: Set Sign Flag          
                     vesp.S = (A & 0x8000 ) >> 15;  vesp.sra = 1; break;
-
                 case 0x1:
                     //B = B >> 1
                     temp = B >> 1; vesp.clock = vesp.clock +1;                                        
@@ -1743,12 +1452,9 @@ void execute(void)
                     //AYO: Set Sign Flag          
                     vesp.S = (B & 0x8000 ) >> 15;  vesp.srb = 1; break;
             }
-
             break;
-
             //MXF (index is used to copy a list of operands into a location one at a time.)
         case  14:
-
             if(VAR == 0)
             {
                 vesp.MAR = IX; // read the next operand (assuming that IX holds a 16 bit address always.)
@@ -1762,15 +1468,12 @@ void execute(void)
                     cout << "\n page fault- instruction not executed!\n";
                     // This will be a place to call a trap and exit to the OS. 
                 }
-
                 vesp.MAR = vesp.IR&0x0FFF; //without an extra clock
                 vesp.clock = vesp.clock +1;  
                 vesp.MEMORY[vesp.MAR] = vesp.MDR;  // move the operand to the specified address
                 IX = IX+1; vesp.MEMORY[2] = IX;//without an extra clock
                 vesp.clock = vesp.clock +1;		  
             }
-
-
             else if(VAR >= 1 && VAR <= 14) 
             {
                 vesp.MAR = IX; // read the next operand
@@ -1784,28 +1487,23 @@ void execute(void)
                     cout << "\n page fault- instruction not executed!\n";
                     // This will be a place to call a trap and exit to the OS. 
                 }
-
                 vesp.MAR = vesp.IR&0x0FFF; //without an extra clock
                 vesp.clock = vesp.clock +1;  
                 vesp.HDISK[vesp.MAR | (VAR << 12)] = vesp.MDR;  // move the operand to the specified address
                 IX = IX+1; vesp.MEMORY[2] = IX; //without an extra clock
                 vesp.clock = vesp.clock +1;
             }
-
             else
             {
                 cout << "\n page fault- instruction not executed!\n";
                 // This will be a place to call a trap and exit to the OS. 
             }
-
             //AYO: Set Zero Flag
             if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
             //AYO: Set Sign Flag          
             vesp.S = (A & 0x8000 ) >> 15;  vesp.mxf = 1; break;
-
             //MXT (index register is used to copy an operand to a set of locations one at a time.)
         case  15:
-
             if((IX >> 12)  == 0) //destination is in vesp.MEMORY (and IX always holds a 16-bit address.)
             {
                 vesp.MAR = vesp.IR&0x0FFF; // read the operand
@@ -1820,15 +1518,12 @@ void execute(void)
                         cout << "\npage fault- instruction not executed!\n";
                         // This will be a place to call a trap and exit to the OS. 
                     }
-
                 vesp.MAR = IX; //without an extra clock
                 vesp.clock = vesp.clock +1; 
                 vesp.MEMORY[vesp.MAR] = vesp.MDR; //move the operand to the next location
                 IX = IX+1; vesp.MEMORY[2] = IX; //without an extra clock
                 vesp.clock = vesp.clock +1; 
-
             }
-
             else if((IX>> 12) >= 1  && ( IX >> 12) <= 14) //destination is in vesp.HDISK
             {
                 vesp.MAR = vesp.IR&0x0FFF; // read the operand
@@ -1843,36 +1538,28 @@ void execute(void)
                         cout << "\npage fault- instruction not executed!\n";
                         // This will be a place to call a trap and exit to the OS. 
                     }
-
                 vesp.MAR = (short) IX; //without an extra clock
                 vesp.clock = vesp.clock +1; 
                 vesp.HDISK[vesp.MAR] = vesp.MDR; //move the operand to the next location
                 IX = IX+1; vesp.MEMORY[2] = IX; //without an extra clock
                 vesp.clock = vesp.clock +1; 
             }
-
             else
             {
                 cout << "\npage fault- instruction not executed!\n";  
                 // This will be a place to call a trap and exit to the OS. 
             }
-
             //AYO: Set Zero Flag
             if(A  == 0) vesp.Z = 1; else vesp.Z = 0; 
             //AYO: Set Sign Flag          
             vesp.S = (A & 0x8000 ) >> 15;  vesp.mxt = 1; break;        
     }
-
-
 }
-
-
 //Sample runs
 /*
    [Session started at 2009-04-23 20:21:57 -0400.]
    vesp is booting...                                             
    loading kernel....                                             
-
 enter: r
 m-address: 0A00
 enter next code: 2000
@@ -1896,13 +1583,10 @@ Decoded instruction is: LDA
 Clock cycle = CEF3
 EXECUTE SUBCYCLE
 Clock cycle = CEF6
-
 A = 0007, B = 0A00, IX = 0A09, Z = 1, S = 0, C = 0, F = 0
 MAR = 0000, PC = 00000A02, IR = 2000, reset = 0
 add = 0 complement = 0
-
 Memory[0000] = 0007
-
 Machine Cycle 00002CFD: PC = 00000A02, 
 FETCH SUBCYCLE
 MAR = 0A02, IR = 2002, 
@@ -1912,13 +1596,10 @@ Decoded instruction is: LDA
 Clock cycle = CEF8
 EXECUTE SUBCYCLE
 Clock cycle = CEFB
-
 A = 0007, B = 0A00, IX = E000, Z = 0, S = 0, C = 0, F = 0
 MAR = 0002, PC = 00000A04, IR = 2002, reset = 0
 add = 0 complement = 0
-
 Memory[0002] = E000
-
 Machine Cycle 00002CFE: PC = 00000A04, 
 FETCH SUBCYCLE
 MAR = 0A04, IR = F000, 
@@ -1928,13 +1609,10 @@ Decoded instruction is: MXT
 Clock cycle = CEFD
 EXECUTE SUBCYCLE
 Clock cycle = CF00
-
 A = 0007, B = 0A00, IX = E001, Z = 0, S = 0, C = 0, F = 0
 MAR = E000, PC = 00000A05, IR = F000, reset = 0
 add = 0 complement = 0
-
 Memory[E000] = 0007
-
 Machine Cycle 00002CFF: PC = 00000A05, 
 FETCH SUBCYCLE
 MAR = 0A05, IR = 2002, 
@@ -1944,13 +1622,10 @@ Decoded instruction is: LDA
 Clock cycle = CF02
 EXECUTE SUBCYCLE
 Clock cycle = CF05
-
 A = 0007, B = 0A00, IX = E000, Z = 0, S = 0, C = 0, F = 0
 MAR = 0002, PC = 00000A07, IR = 2002, reset = 0
 add = 0 complement = 0
-
 Memory[0002] = E000
-
 Machine Cycle 00002D00: PC = 00000A07, 
         FETCH SUBCYCLE
         MAR = 0A07, IR = E001, 
@@ -1960,13 +1635,10 @@ Machine Cycle 00002D00: PC = 00000A07,
         Clock cycle = CF07
         EXECUTE SUBCYCLE
         Clock cycle = CF0A
-
         A = 0007, B = 0007, IX = E001, Z = 0, S = 0, C = 0, F = 0
         MAR = 0001, PC = 00000A08, IR = E001, reset = 0
         add = 0 complement = 0
-
         Memory[0001] = 0007
-
         Machine Cycle 00002D01: PC = 00000A08, 
         FETCH SUBCYCLE
         MAR = 0A08, IR = 7000, 
@@ -1976,20 +1648,16 @@ Machine Cycle 00002D00: PC = 00000A07,
         Clock cycle = CF0C
         EXECUTE SUBCYCLE
         Clock cycle = CF0D
-
         A = 0007, B = 0007, IX = E001, Z = 0, S = 0, C = 0, F = 0
         MAR = 0A08, PC = 00000A09, IR = 7000, reset = 1
         add = 0 complement = 0
-
         enter:  
         ----------
         */
         /*
-
            [Session started at 2008-11-11 08:47:26 -0500.]
            vesp is booting...                                             
            loading kernel....                                             
-
            enter: r
            m-address: 0A00
            enter next code: 2000
@@ -2018,13 +1686,10 @@ Machine Cycle 00002D00: PC = 00000A07,
            Clock cycle = CE6E
            EXECUTE SUBCYCLE
            Clock cycle = CE71
-
            A = 000E, B = 0A00, IX = 0A07, Z = 1, S = 0, C = 0, F = 0
            MAR = 0000, PC = 00000A02, IR = 2000, reset = 0
            add = 0 complement = 0
-
            Memory[0000] = 000E
-
            Machine Cycle 00002CEA: PC = 00000A02, 
            FETCH SUBCYCLE
            MAR = 0A02, IR = 2001, 
@@ -2034,13 +1699,10 @@ Machine Cycle 00002D00: PC = 00000A07,
            Clock cycle = CE73
            EXECUTE SUBCYCLE
            Clock cycle = CE76
-
            A = 000E, B = 000D, IX = 0A07, Z = 0, S = 0, C = 0, F = 0
            MAR = 0001, PC = 00000A04, IR = 2001, reset = 0
            add = 0 complement = 0
-
            Memory[0001] = 000D
-
            Machine Cycle 00002CEB: PC = 00000A04, 
            FETCH SUBCYCLE
            MAR = 0A04, IR = 0000, 
@@ -2050,11 +1712,9 @@ Machine Cycle 00002D00: PC = 00000A07,
            Clock cycle = CE78
            EXECUTE SUBCYCLE
            Clock cycle = CE79
-
            A = 001B, B = 000D, IX = 0A07, Z = 0, S = 0, C = 0, F = 0
            MAR = 0A04, PC = 00000A05, IR = 0000, reset = 0
            add = 1 complement = 0
-
         Machine Cycle 00002CEC: PC = 00000A05, 
         FETCH SUBCYCLE
         MAR = 0A05, IR = 7000, 
@@ -2064,29 +1724,20 @@ Machine Cycle 00002D00: PC = 00000A07,
         Clock cycle = CE7B
         EXECUTE SUBCYCLE
         Clock cycle = CE7C
-
         A = 001B, B = 000D, IX = 0A07, Z = 0, S = 0, C = 0, F = 0
         MAR = 0A05, PC = 00000A06, IR = 7000, reset = 1
         add = 0 complement = 0
-
         enter: 
         */
-
-
         //sample code in core memory (to be removed when read and write are implemented.)
         //stored in 0x0A00--0x0A06 -- one of the user program frames in vesp.MEMORY
-
         // vesp.MEMORY[0x0A00] = 0x2000;  vesp.MEMORY[0x0A01] = 0x000F;
         // vesp.MEMORY[0x0A02] = 0x2001;  vesp.MEMORY[0x0A03] = 0x000F;
         // vesp.MEMORY[0x0A04] = 0x0000;  vesp.MEMORY[0x0A05] = 0x7000;
         // vesp.MEMORY[0x0A06] = 0xFFFF; //end of program
-
         //sample code in disk memory (to be removed when read and write are implemented.)
         //stored in 0x1300--0x1306 -- one of the user program frames in vesp.MEMORY
-
         // vesp.HDISK[0x1300] = 0x2000;  vesp.HDISK[0x1301] = 0x000F;
         // vesp.HDISK[0x1302] = 0x2001;  vesp.HDISK[0x1303] = 0x000F;
         // vesp.HDISK[0x1304] = 0x0300;  vesp.HDISK[0x1305] = 0x7000;
         // vesp.HDISK[0x1306] = 0xFFFF; //end of program
-
-

@@ -16,6 +16,8 @@
 0x3014;   0x0002; //store IX back into 0x0014   //0x0810-811
 0x3002;   0x0010; //restore IX                  //0x0812-813
 0x4802;  //Jump back to the loop       //0x0814
+
 0x3002;   0x0014; //load  IX from 0x0014 //0x0815-816 //0014 holds index to core
 0xF018; //copy temp-1 to MEMORY[IX]   //0x0817
+
 0x7700; //No-operation                //0x0818
